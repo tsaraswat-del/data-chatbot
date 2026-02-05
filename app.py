@@ -4,74 +4,75 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import ollama
+import os
+import glob
 
 # --- Configuration ---
-st.set_page_config(page_title="Multi-File Data Bot", layout="wide")
-st.title("📂 Chat with Multiple JSON Files (Local AI)")
+st.set_page_config(page_title="Auto-Detect Data Bot", layout="wide")
+st.title("📂 Chat with Local JSON Files")
 
 # Sidebar
 with st.sidebar:
-    st.header("Upload Files")
-    # Updated: accept_multiple_files=True
-    schema_files = st.file_uploader("Upload Schemas (Optional)", type=["json"], accept_multiple_files=True)
-    data_files = st.file_uploader("Upload Data (JSON)", type=["json"], accept_multiple_files=True)
+    st.header("Data Source")
+    st.info("ℹ️ Put your .json files in the file explorer on the left.")
     
-    st.success("✅ Connected to Local AI (Qwen)")
-    st.info("No internet API required.")
+    if st.button("🔄 Refresh File List"):
+        st.rerun()
+
+    st.success("✅ Connected to Local AI")
 
 # --- Helper Functions ---
-def load_data_registry(uploaded_files):
+def get_json_files():
+    """Scans the current directory for JSON files, excluding system files."""
+    # Find all .json files
+    all_files = glob.glob("*.json")
+    
+    # Exclude system/config files
+    ignore_list = ["package.json", "package-lock.json", "tsconfig.json"]
+    valid_files = [f for f in all_files if f not in ignore_list]
+    return valid_files
+
+def load_data_registry(filenames):
     registry = {}
-    if uploaded_files:
-        for f in uploaded_files:
-            # Use filename as the key
-            registry[f.name] = json.load(f)
+    for name in filenames:
+        try:
+            with open(name, 'r') as f:
+                registry[name] = json.load(f)
+        except Exception as e:
+            st.error(f"Error reading {name}: {e}")
     return registry
 
-def get_data_summary(data_registry, schema_registry):
-    """
-    Creates a text summary of all loaded files for the AI to understand.
-    """
+def get_data_summary(data_registry):
     summary = ""
     for name, data in data_registry.items():
-        summary += f"\n--- DATASET: {name} ---\n"
-        
-        # Add Schema info if available
-        if name in schema_registry:
-            summary += f"Schema: {json.dumps(schema_registry[name])}\n"
-        
-        # Add Data Sample (First item only to save space)
+        summary += f"\n--- FILE: {name} ---\n"
+        # Peek at structure
         if isinstance(data, list) and len(data) > 0:
+            summary += f"Type: List of Objects. Count: {len(data)}\n"
             summary += f"Sample: {json.dumps(data[:1])}\n"
         elif isinstance(data, dict):
-            # Take first 2 keys
+            summary += f"Type: Dictionary. Keys: {list(data.keys())}\n"
             sample = {k: v for k, v in list(data.items())[:2]}
             summary += f"Sample: {json.dumps(sample)}\n"
-            
     return summary
 
 def get_local_response(user_query, data_summary):
-    """
-    Uses Ollama running locally.
-    """
     system_prompt = f"""
     You are a Python Data Scientist. 
-    You have a dictionary named `datasets` containing multiple JSON files.
+    You have a dictionary named `datasets`. Keys are filenames.
     
-    The keys of the dictionary are the filenames.
-    
-    Here is the overview of the loaded data:
+    Data Overview:
     {data_summary}
 
     Task: Write Python code to answer: "{user_query}"
     
-    CRITICAL RULES:
-    1. Access data using `datasets['filename.json']`.
-    2. To join data, convert them to pandas DataFrames first.
-    3. Use `pd.json_normalize()` if data is nested.
-    4. Save the final table to `df_result`.
-    5. Save the final chart to `fig`.
-    6. OUTPUT ONLY CODE. NO MARKDOWN.
+    RULES:
+    1. Access data via `datasets['filename.json']`.
+    2. Join/Merge data using Pandas if needed.
+    3. Use `pd.json_normalize()` for nested data.
+    4. Save final table to `df_result`.
+    5. Save final chart to `fig`.
+    6. OUTPUT ONLY PYTHON CODE. NO MARKDOWN.
     """
 
     try:
@@ -84,19 +85,20 @@ def get_local_response(user_query, data_summary):
         return f"Error: {str(e)}"
 
 # --- Main App ---
-if data_files:
-    # Load all files into dictionaries
-    data_registry = load_data_registry(data_files)
-    
-    # Try to map schemas to data if names match, otherwise just load them
-    schema_registry = load_data_registry(schema_files)
 
-    # UI Layout
+# 1. Auto-detect files
+found_files = get_json_files()
+
+if found_files:
+    # Load data
+    data_registry = load_data_registry(found_files)
+
     col1, col2 = st.columns([1, 2])
     
     with col1:
-        st.subheader("Loaded Datasets")
-        # Show a tab for each file
+        st.subheader(f"Found {len(found_files)} Files")
+        
+        # Create tabs for preview
         if data_registry:
             tabs = st.tabs(list(data_registry.keys()))
             for i, (name, data) in enumerate(data_registry.items()):
@@ -104,39 +106,34 @@ if data_files:
                     st.json(data if isinstance(data, dict) else data[:1], expanded=False)
 
     with col2:
-        user_input = st.text_area("Ask a question about your files:", height=100, 
-                                placeholder="e.g. 'Join users.json and orders.json on user_id and show total spend'")
+        user_input = st.text_area("Ask a question about these files:", height=100)
         
         if st.button("Generate View"):
             if not user_input:
                 st.warning("Please type a request.")
             else:
-                with st.spinner("Local AI is analyzing multiple files..."):
+                with st.spinner("Analyzing..."):
                     try:
-                        # 1. Create Context
-                        summary = get_data_summary(data_registry, schema_registry)
-                        
-                        # 2. Get Code
+                        summary = get_data_summary(data_registry)
                         code = get_local_response(user_input, summary)
                         code = code.replace("```python", "").replace("```", "").strip()
                         
-                        with st.expander("Show Generated Code"):
+                        with st.expander("Show Logic"):
                             st.code(code, language='python')
 
-                        # 3. Execute Code
-                        # We pass 'datasets' instead of 'data' now
+                        # Execute
                         local_vars = {"datasets": data_registry, "pd": pd, "px": px, "go": go}
                         exec(code, {}, local_vars)
 
-                        # 4. Show Results
                         if "fig" in local_vars:
                             st.plotly_chart(local_vars["fig"], use_container_width=True)
                         elif "df_result" in local_vars:
                             st.dataframe(local_vars["df_result"], use_container_width=True)
                         else:
-                            st.warning("Code ran but produced no 'fig' or 'df_result'.")
+                            st.warning("No result generated.")
 
                     except Exception as e:
-                        st.error(f"Error: {e}")
+                        st.error(f"Execution Error: {e}")
 else:
-    st.info("Upload one or more JSON files to start.")
+    st.warning("No .json files found in the directory.")
+    st.markdown("👉 **Action:** Drag and drop your `.json` files into the file list on the left side of the screen.")
