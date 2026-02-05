@@ -3,134 +3,100 @@ import json
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-import google.generativeai as genai
-import io
+import ollama
 
 # --- Configuration ---
-st.set_page_config(page_title="Gemini JSON Data Chatbot", layout="wide")
-st.title("🤖 Chat with Multi-Level JSON (via Gemini)")
+st.set_page_config(page_title="Local AI Data Bot", layout="wide")
+st.title("🏠 Chat with Data (Local / No API Key)")
 
-# Sidebar for Setup
+# Sidebar
 with st.sidebar:
-    st.header("Configuration")
-    api_key = st.text_input("Enter Google Gemini API Key", type="password")
-    st.markdown("[Get a Gemini API Key here](https://aistudio.google.com/app/apikey)")
-    
-    st.header("Upload Files")
-    schema_file = st.file_uploader("Upload Schema (JSON) - Optional", type=["json"])
+    st.header("Upload Data")
+    schema_file = st.file_uploader("Upload Schema (Optional)", type=["json"])
     data_file = st.file_uploader("Upload Data (JSON)", type=["json"])
+    
+    st.info("✅ Running Locally on Qwen2.5-Coder-1.5B")
 
-    st.info("Note: This bot uses Python's `exec()` to run AI-generated code. Use only with trusted data.")
-
-# --- Helper Functions ---
 def load_json(uploaded_file):
     if uploaded_file is not None:
         return json.load(uploaded_file)
     return None
 
-def get_gemini_response(api_key, user_query, data_sample, schema_structure):
+def get_local_response(user_query, data_sample, schema_structure):
     """
-    Sends the data structure and user query to Google Gemini.
-    Returns Python code to execute.
+    Uses Ollama running locally in the Codespace.
     """
-    
-    # Configure the API
-    genai.configure(api_key=api_key)
-    
-    # Select Model (Gemini 1.5 Flash is fast and good at coding)
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    system_prompt = f"""
+    You are a Python Data Scientist. 
+    Dataset schema: {json.dumps(schema_structure)}
+    Dataset sample: {json.dumps(data_sample)}
 
-    # Construct the Prompt
-    prompt = f"""
-    You are a Python Data Scientist assistant. 
-    You have a JSON dataset loaded in a variable named `data`.
+    Task: Write Python code to answer: "{user_query}"
     
-    The structure of the data (or schema) looks like this:
-    {json.dumps(schema_structure, indent=2)}
-    
-    A sample of the actual data looks like this:
-    {json.dumps(data_sample, indent=2)}
-
-    Your goal is to write Python code to satisfy the user's request: "{user_query}"
-    
-    GUIDELINES:
-    1. If the user asks for a specific view or table, create a Pandas DataFrame named `df_result`.
-    2. If the user asks for a chart/plot, create a Plotly Figure named `fig`.
-    3. You must handle nested JSON. Use `pd.json_normalize(data, ...)` or list comprehensions to extract deeply nested fields.
-    4. Provide ONLY the executable Python code. Do not wrap in markdown (no ```python).
-    5. Do not use print(). If you create a DataFrame, assign it to `df_result`. If you create a chart, assign it to `fig`.
-    6. Assume `import pandas as pd`, `import plotly.express as px`, and `import plotly.graph_objects as go` are already imported.
+    CRITICAL RULES:
+    1. Output ONLY valid Python code. NO explanations. NO markdown.
+    2. Use `pd.json_normalize(data)` to flatten nested JSON.
+    3. Save tables to `df_result`.
+    4. Save charts to `fig`.
+    5. Assume imports: pandas as pd, plotly.express as px
     """
 
-    # Generate content
-    response = model.generate_content(prompt)
-    
-    return response.text
+    try:
+        response = ollama.chat(model='qwen2.5-coder:1.5b', messages=[
+            {'role': 'system', 'content': system_prompt},
+            {'role': 'user', 'content': user_query},
+        ])
+        return response['message']['content']
+    except Exception as e:
+        return f"Error connecting to Ollama: {str(e)}"
 
-# --- Main Logic ---
-
-if api_key and data_file:
-    
-    # Load Data
+# --- Main App ---
+if data_file:
     raw_data = load_json(data_file)
-    raw_schema = load_json(schema_file) if schema_file else "Schema not provided, infer from data sample."
+    raw_schema = load_json(schema_file) if schema_file else "Infer from data"
 
-    # Create a small sample for the LLM context
     if isinstance(raw_data, list):
-        data_sample = raw_data[:2] if raw_data else []
+        data_sample = raw_data[:1]
     else:
         data_sample = {k: v for k, v in list(raw_data.items())[:2]}
 
-    # UI Layout
     col1, col2 = st.columns([1, 2])
     
     with col1:
-        st.subheader("Data Preview (Raw)")
+        st.subheader("Data Preview")
         st.json(data_sample, expanded=False)
 
     with col2:
-        st.subheader("Chat Interface")
-        user_input = st.text_area("How do you want to view this data?", placeholder="e.g., 'Unnest the products array and show average price by category'")
+        user_input = st.text_area("Ask a question:", height=100)
         
         if st.button("Generate View"):
             if not user_input:
-                st.warning("Please enter a command.")
+                st.warning("Please type a request.")
             else:
-                with st.spinner("Gemini is analyzing the JSON structure..."):
+                with st.spinner("Local AI is thinking... (this depends on CPU speed)"):
                     try:
-                        # 1. Get Code from Gemini
-                        generated_code = get_gemini_response(api_key, user_input, data_sample, raw_schema)
+                        # 1. Get Code
+                        code = get_local_response(user_input, data_sample, raw_schema)
                         
-                        # Clean up Markdown (Gemini often adds ```python ... ```)
-                        generated_code = generated_code.replace("```python", "").replace("```", "").strip()
-
-                        st.markdown("### Generated Logic")
-                        with st.expander("View Python code generated by Gemini"):
-                            st.code(generated_code, language='python')
-
-                        # 2. Execute Code safely
-                        local_vars = {
-                            "data": raw_data, 
-                            "pd": pd, 
-                            "px": px, 
-                            "go": go
-                        }
+                        # Clean cleanup
+                        code = code.replace("```python", "").replace("```", "").strip()
                         
-                        exec(generated_code, {}, local_vars)
+                        with st.expander("Show Generated Code"):
+                            st.code(code, language='python')
 
-                        # 3. Handle Outputs
+                        # 2. Execute Code
+                        local_vars = {"data": raw_data, "pd": pd, "px": px, "go": go}
+                        exec(code, {}, local_vars)
+
+                        # 3. Show Results
                         if "fig" in local_vars:
-                            st.subheader("Visual Result")
                             st.plotly_chart(local_vars["fig"], use_container_width=True)
-                        
-                        if "df_result" in local_vars:
-                            st.subheader("Data Result")
+                        elif "df_result" in local_vars:
                             st.dataframe(local_vars["df_result"], use_container_width=True)
-                            
-                        if "fig" not in local_vars and "df_result" not in local_vars:
-                            st.warning("Gemini generated code, but no 'fig' or 'df_result' variable was created.")
+                        else:
+                            st.warning("Code ran but produced no 'fig' or 'df_result'.")
 
                     except Exception as e:
-                        st.error(f"An error occurred: {e}")
+                        st.error(f"Error: {e}")
 else:
-    st.info("Please upload a JSON file and provide a Google Gemini API Key to start.")
+    st.info("Upload JSON data to start. (No API Key needed!)")
