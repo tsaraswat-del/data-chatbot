@@ -7,7 +7,7 @@ import ollama
 
 # --- Configuration ---
 st.set_page_config(page_title="Local AI Data Bot", layout="wide")
-st.title("🏠 Chat with Data (Local / No API Key)")
+st.title("🏠 Chat with Data (Local - No API Key)")
 
 # Sidebar
 with st.sidebar:
@@ -15,7 +15,9 @@ with st.sidebar:
     schema_file = st.file_uploader("Upload Schema (Optional)", type=["json"])
     data_file = st.file_uploader("Upload Data (JSON)", type=["json"])
     
-    st.info("✅ Running Locally on Qwen2.5-Coder-1.5B")
+    # Visual confirmation that we are not using Gemini
+    st.success("✅ Connected to Local AI (Qwen)")
+    st.info("No internet API required.")
 
 def load_json(uploaded_file):
     if uploaded_file is not None:
@@ -42,13 +44,14 @@ def get_local_response(user_query, data_sample, schema_structure):
     """
 
     try:
+        # We use the model we downloaded earlier
         response = ollama.chat(model='qwen2.5-coder:1.5b', messages=[
             {'role': 'system', 'content': system_prompt},
             {'role': 'user', 'content': user_query},
         ])
         return response['message']['content']
     except Exception as e:
-        return f"Error connecting to Ollama: {str(e)}"
+        return f"Error: {str(e)}"
 
 # --- Main App ---
 if data_file:
@@ -73,12 +76,12 @@ if data_file:
             if not user_input:
                 st.warning("Please type a request.")
             else:
-                with st.spinner("Local AI is thinking... (this depends on CPU speed)"):
+                with st.spinner("Local AI is thinking..."):
                     try:
                         # 1. Get Code
                         code = get_local_response(user_input, data_sample, raw_schema)
                         
-                        # Clean cleanup
+                        # Cleanup formatting
                         code = code.replace("```python", "").replace("```", "").strip()
                         
                         with st.expander("Show Generated Code"):
@@ -99,4 +102,4 @@ if data_file:
                     except Exception as e:
                         st.error(f"Error: {e}")
 else:
-    st.info("Upload JSON data to start. (No API Key needed!)")
+    st.info("Upload JSON data to start.")
