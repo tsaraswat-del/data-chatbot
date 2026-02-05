@@ -1,0 +1,204 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "file:./OsttraEvent.json",
+    "title": "Osttra event schema",
+    "description": "Version 15.0 last updated 2025-08-20",
+    "type": "object",
+    "required": ["eventData"],
+    "properties": {
+        "eventData": {"$ref": "#/$defs/EventData"}
+    },
+    "$defs": {
+        "EventData": {
+            "description": "Event fields only to be enriched by Jigsaw",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "eventProcessingTimeStamp": {
+                    "description" : "The timestamp when the event was processed by a function within the Jigsaw ecosystem, prior to ingestion to the Jigsaw TradeStore. For example, this would be the timestamp the XTM Gateway service would populate when handling valid cancellations",
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "valuationUpdate": {
+                    "description": "",
+                    "type": "array",
+                    "items": {"$ref": "#/$defs/ValuationUpdate"},
+                    "minItems": 1
+                },
+                "settlementUpdate": {
+                    "description": "",
+                    "$ref": "#/$defs/SettlementUpdate"
+                },
+                "cancellation": {
+                    "description": "",
+                    "$ref": "#/$defs/Cancellation"
+                },
+                "partyDetail": {
+                    "description": "A repeatable array of PartyDetail structures, min occurs=1",
+                    "type": "array",
+                    "items": {"$ref": "./OsttraShared.json#/$defs/PartyDetail"},
+                    "minItems": 1
+                }
+            },
+            "oneOf": [
+                {
+                    "required": ["valuationUpdate"]
+                },
+                {
+                    "required": ["settlementUpdate"]
+                },
+                {
+                    "required": ["cancellation"]
+                }
+            ]
+        },
+        "ValuationUpdate": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "tradeId": {
+                    "description": "Trade Id of the trade on which the valuation was performed.",
+                    "type": "string"
+                },
+                "version": {
+                    "description": "Version of the trade on which the valuation was performed. Likely to reflect the version when the snapshot was taken",
+                    "type": "string"
+                },
+                "positionId": {
+                    "description": "Position Id of the position on which the valuation was performed.",
+                    "type": "string"
+                },
+                "spotRate": {
+                    "description": "For FX, the Spot Rate of the currency pair when the MTM was calculated for the trade or position",
+                    "type": "number"
+                },
+                "forwardRate": {
+                    "description": "For FX, the Forward Rate of the currency pair when the MTM was calculated for the trade or position",
+                    "type": "number"
+                },
+                "crossCurrencyRate": {
+                    "description": "For FX, the Forward Rate used to convert the MTM amount (in the reference currency of the trade or position) to STM currency amount. Note: STM currency is agreed bilaterally between participants.",
+                    "type": "number"
+                },
+                "discountFactor": {
+                    "description": "For FX, the Discount Factor used in the Present Value calculation from the MTM amount for the trade or position",
+                    "type": "number"
+                },
+                "mtmAmount": {
+                    "description": "The Mark to Market amount, as calculated by the valuation service, for the valuation date of the trade or position.",
+                    "type": "number"
+                },
+                "overnightStmCurrencyFundingRate": {
+                    "description": "The risk free overnight funding rate of the STM currency used for the Price Alignment calculation.",
+                    "type": "number"
+                },
+                "priceAlignment": {
+                    "description": "The interest calculated, between the previous and current valuation date, on the last STM amount for the trade or position.",
+                    "type": "number"
+                },
+                "dailyPnL": {
+                    "description": "Daily Profit or Loss from the perspective of participant's trade or position.",
+                    "type": "number"
+                },
+                "stmAmount": {
+                    "description": "The Settle to Market amount, as calculated by the valuation service, for the valuation date of the trade or position.",
+                    "type": "number"
+                },
+                "cumulativePnL": {
+                    "description": "Total or Net Profit/Loss calculated as sum of dailyPnL amounts from the trade date to valuation date.",
+                    "type": "number"
+                },
+                "cumulativeStmAmount": {
+                    "description": "Total or Net STM amount calculated as sum of stmAmount from trade date to the valuation date",
+                    "type": "number"
+                },
+                "partyId": {
+                    "description": "The identifier for the party defined by the source platform",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "version",
+                "partyId"
+            ],
+            "oneOf": [
+                {
+                    "required": ["tradeId"]
+                },
+                {
+                    "required": ["positionId"]
+                }
+            ]
+        },
+        "SettlementUpdate": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "tradeId": {
+                    "description": "Trade Id of the trade that was settled. When multiple trades are settled, multiple trade Id's can be provided.",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "positionId": {
+                    "description": "Where all the underlying trades of an aggregated position have been settled, a Position Id can be provided to allow the settlement status of underlying trades to be updated. When multiple positions have be settled, multiple position Id's can be provided.  ",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "settlementDateTimeStamp": {
+                    "description": "Date and time when the settlment event occured in the source platform.",
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "settlementStatus": {
+                    "description": "The settlement status of trade (or position), set to true or false.",
+                    "type": "boolean"
+                },
+                "stmSettlementStatus": {
+                    "description": "The settle-to-market payment settlement status for the valuation date of the trade (or position), set to true or false. ",
+                    "type": "boolean"
+                },
+                "stmSettlementDateTimeStamp": {
+                    "description": "Date and time when the payment for the STM amount was made",
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "partyId": {
+                    "description": "The identifier for the party defined by the source platform",
+                    "type": "string"
+                }
+            },
+            "required": ["partyId"],
+            "oneOf": [
+                {
+                    "required": ["tradeId"]
+                },
+                {
+                    "required": ["positionId"]
+                }
+            ]
+        },
+        "Cancellation": {
+            "type": "object",
+            "required": [
+                "tradeId",
+                "partyId"
+            ],
+            "properties": {
+                "tradeId": {
+                    "description": "Trade Id of the original trade on which the cancellation event was performed. Where multiple trades need to be cancelled, multiple trade Id's of the original trades can be provided.",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "cancellationDateTimeStamp": {
+                    "description": "Date and time when the cancellation event occured in the source platform.",
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "partyId": {
+                    "description": "The identifier for the party defined by the source platform",
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

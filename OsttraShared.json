@@ -1,0 +1,589 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "file:./OsttraShared.json",
+  "title": "Osttra shared schema",
+  "description": "Version 15.0 last updated 2025-08-20",
+  "type": "object",
+  "properties": {
+    "partyDetail": {
+      "$ref": "#/$defs/PartyDetail"
+    },
+    "privateData": {
+      "$ref": "#/$defs/PrivateData"
+    },
+    "additionalFields": {
+      "$ref": "#/$defs/AdditionalFields"
+    },
+    "documentationDetail": {
+      "$ref": "#/$defs/DocumentationDetail"
+    },
+    "settlementDetail": {
+      "$ref": "#/$defs/SettlementDetail"
+    },
+    "calculationPeriodDates": {
+      "$ref": "#/$defs/CalculationPeriodDates"
+    },
+    "paymentDates": {
+      "$ref": "#/$defs/PaymentDates"
+    }
+  },
+  "$defs": {
+    "PartyDetail": {
+      "type": "object",
+      "required": [
+        "partyId"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "partyRole": {
+          "description": "The role that the party plays on the trade or post trade event",
+          "$ref": "#/$defs/PartyRoleEnum"
+        },
+        "additionalPartyRole": {
+          "description": "In addition to the partyRole this is a secondary role that a party plays on the trade or post trade event, such as ClearingHouse, ClearingAgent, ClearingCustomer etc",
+          "type": "string"
+        },
+        "partyReference": {
+          "description": "The reference for the party on the trade",
+          "type": "string"
+        },
+        "partyId": {
+          "description": "The identifier for the party defined by the source platform",
+          "type": "string"
+        },
+        "partyName": {
+          "description": "The name of the party defined by the source platform",
+          "type": "string"
+        },
+        "partyFullLegalName": {
+          "description": "The legal name of the party defined by the source platform",
+          "type": "string"
+        },
+        "partyInstitutionName": {
+          "description": "The institution name of the party defined by the source platform",
+          "type": "string"
+        },
+        "partyTradeId": {
+          "description": "The identifier for the trade provided by the party in the source platform. Can also be seen by counterparty.",
+          "type": "string"
+        },
+        "partyDealLinkId": {
+          "description": "An identifier to link components within a trade, for example the near and far leg of a swap",
+          "type": "string"
+        },
+        "partySource": {
+          "description": "The class or source of the party specified by the current Parties component. Valid Values (ETD):C = AccptMarketPart, D = PropCode, G = MIC",
+          "type": "string"
+        },
+        "partyEventId": {
+          "description": "The identifier for the post trade event as provided by the party in the source platform. Can also be seen by counterparty.",
+          "type": "string"
+        },
+        "partySourcePlatformInstitutionId": {
+          "description": "An internal Id used by the sourceplatform to uniquely identify the party's organisation/institution. Typically will never change once allocated by source platform. This normally is not exposed to clients",
+          "type": "string"
+        },
+        "partySourcePlatformAccountId": {
+          "description": "An internal Id used by the sourceplatform to uniquely identify a party grouped under an organisation/institution. Typically will never change once allocated by source platform. This normally is not exposed to clients",
+          "type": "string"
+        },
+        "partyClientTradeId": {
+          "description": "When the Party is a Broker (Clearing, Prime etc), this is the tradeId used for the Broker on the trade where it faces the Client. (Typically a B2B trade). Can also be seen by counterparty.",
+          "type": "string"
+        },
+        "partyClientDirection": {
+          "description": "When the Party is a Client facing a Broker (Clearing, Prime etc), this is the traded direction for the client",
+          "type": "string"
+        },
+        "partySubmissionTimeStamp": {
+          "description": "When the party submitted the trade/event to the source platform",
+          "type": "string",
+          "format": "date-time"
+        },
+        "partyLei": {
+          "description": "The LEI of the party defined by the source platform",
+          "type": "string"
+        },
+        "privateData": {
+          "description": "Private data structure for the party",
+          "$ref": "#/$defs/PrivateData"
+        }
+      }
+    },
+    "PrivateData": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tradeId": {
+          "description": "The tradeId of the party's internal system",
+          "type": "string"
+        },
+        "portfolio": {
+          "description": "The party's portfolio associated to the trade",
+          "type": "string"
+        },
+        "tradingBook": {
+          "description": "The party's trading book associated to the trade",
+          "type": "string"
+        },
+        "processingState": {
+          "description": "The party's private trade or event processiong stated used in MW",
+          "type": "string"
+        },
+        "bookingState": {
+          "description": "The party's private trade or event booking state used in MW.",
+          "type": "string"
+        },
+        "version": {
+          "description": "",
+          "type": "string"
+        },
+        "additionalFields": {
+          "description": "A repeatable array of additionalFields structures",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AdditionalFields"
+          },
+          "minItems": 1
+        },
+        "clearingHouseTradeId": {
+          "description": "The trade Id assigned by the clearing house for a cleared trade",
+          "type": "string"
+        },
+        "clearingStatus": {
+          "description": "The clearing status as provided by the clearing house",
+          "type": "string"
+        },
+        "clearingBrokerId": {
+          "description": "The identifier for the clearing broker assigned by the source platform",
+          "type": "string"
+        },
+        "clearingBrokerName": {
+          "description": "The clearing broker name assigned by the source platform",
+          "type": "string"
+        },
+        "batchId": {
+          "description": "A batch Id associated with trades, that are grouped for a specific business purpose. For MW this is used to capture the batchId for trades that are backloaded to clearing",
+          "type": "string"
+        },
+        "nettingId": {
+          "description": "A netting id that can be used by the clearing house to perform customised compression of trades, where only trades with the same netting Id are compressed together.In MW this field is also used for trades that go to CME such that users can provide a CME Alias (CMEs representation of a party)",
+          "type": "string"
+        },
+        "creditTokenIssuer": {
+          "description": "The institution that issued a Credit Token",
+          "type": "string"
+        },
+        "creditTokenId": {
+          "description": "",
+          "type": "string"
+        },
+        "executionVenueType": {
+          "description": "The venue that the trade was executed on",
+          "$ref": "#/$defs/ExecutionVenueTypeEnum"
+        },
+        "brokerId": {
+          "description": "The identifier for the broker assigned by the source platform",
+          "type": "string"
+        },
+        "brokerTradeId": {
+          "description": "The trade Id assigned by the broker",
+          "type": "string"
+        },
+        "brokerageCurrency": {
+          "description": "The brokerage currency",
+          "type": "string"
+        },
+        "brokerageAmount": {
+          "description": "The brokerage amount",
+          "type": "number"
+        }
+      }
+    },
+    "AdditionalFields": {
+      "type": "object",
+      "required": [
+        "additionalFieldName",
+        "additionalFieldValue"
+      ],
+      "properties": {
+        "additionalFieldName": {
+          "description": "The identifier/name of the field as received from the source",
+          "type": "string"
+        },
+        "additionalFieldValue": {
+          "description": "Value of the corresponding field",
+          "type": "string"
+        }
+      }
+    },
+    "DocumentationDetail": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "masterAgreementType": {
+          "description": "The agreement executed between the parties and intended to govern product-specific transactions between those parties",
+          "type": "string"
+        },
+        "masterAgreementDate": {
+          "description": "The date on which the master agreement was signed",
+          "type": "string",
+          "format": "date"
+        },
+        "masterAgreementVersion": {
+          "description": "The version of the master agreement",
+          "type": "string"
+        },
+        "calculationAgent": {
+          "description": "The ISDA calculation agent responsible for performing duties as defined in the applicable product definitions",
+          "type": "string"
+        },
+        "contractualDefinitions": {
+          "description": "The ISDA contractual definitions e.g ISDA1998FX",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "SettlementDetail": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "processingRegion": {
+          "description": "This will be used for STM and will be assigned to the trade from the source platform based on pre-defined static data",
+          "$ref": "#/$defs/ProcessingRegionEnum"
+        },
+        "settlementRegion": {
+          "description": "This will be used for PVP and will be assigned to the trade from the source platform based on pre-defined static data",
+          "$ref": "#/$defs/SettlementRegionEnum"
+        },
+        "settlementAgencyTradeId": {
+          "description": "This will be used for STM/CTM and will be a TradeId assigned by the Settlement/Valuation Agent to the trade at point of registration with the service",
+          "type": "string"
+        },
+        "settlementAgencyRegistrationTimeStamp": {
+          "description": "This will be used for STM/CTM and will be assigned by the Settlement/Valuation Agent to the trade at the point at which registration with the service took place,",
+          "type": "string",
+          "format": "date-time"
+        },
+        "settlementAgencyEventRegistrationTimeStamp": {
+          "description": "This will be used for STM/CTM and will be assigned by the Settlement/Valuation Agent when a subsequent transaction to an existing registered trade has been processed by the service",
+          "type": "string",
+          "format": "date-time"
+        },
+        "settlementAgencyName": {
+          "description": "The Settlement/Valuation Agent Name",
+          "type": "string"
+        },
+        "settlementAgencyPartyId": {
+          "description": "The Settlement/Valuation Agent PartyId - required for MarkitWire",
+          "type": "string"
+        },
+        "settlementAgencyModel": {
+          "description": "The Settlement/Valuation Agent's calculation model CTM or STM",
+          "type": "string"
+        },
+        "settlementAgencyRegistrationStatus": {
+          "description": "The registration status echo'ed back from the Settlement/Valuation Agent",
+          "type": "string"
+        },
+        "settlementAgencyRegistrationReference": {
+          "description": "Any associated comments/references to the settlementAgent Status",
+          "type": "string"
+        },
+        "settlementDateTimeStamp": {
+          "description": "The date and time stamp reflecting when the trade was settled",
+          "type": "string",
+          "format": "date-time"
+        },
+        "settlementStatus": {
+          "description": "The settlement status of trade",
+          "type": "boolean"
+        },
+        "stmCurrency": {
+          "description": "The bilaterally agreed settle-to-market or collateral-to-market currency",
+          "type": "string"
+        }
+      }
+    },
+    "CalculationPeriodDates": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "adjustedEffectiveDate": {
+          "description": "The start date of the calculation period. This date should already be adjusted for any applicable business day convention. This is also the date when the observed rate is applied, the reset date.",
+          "type": "string",
+          "format": "date"
+        },
+        "unadjustedEffectiveDate": {
+          "description": "The start date of the calculation period, subject to adjustment for any non business days for the applicable business day convention",
+          "type": "string",
+          "format": "date"
+        },
+        "effectiveDateBusinessDayConvention": {
+          "description": "The business day convention used for adjusting the Effective Date if it would otherwise fall on a day that is not a business date in the specified business centers",
+          "type": "string"
+        },
+        "effectiveDateBusinessCenters": {
+          "description": "The set of business centers used to determine whether the Effective Date is a business day or not",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "adjustedTerminationDate": {
+          "description": "The end date of the calculation period. This date should already be adjusted for any applicable business day convention.",
+          "type": "string",
+          "format": "date"
+        },
+        "unadjustedTerminationDate": {
+          "description": "The end date of the calculation period, subject to adjustment for any non business days for the applicable business day convention",
+          "type": "string",
+          "format": "date"
+        },
+        "terminationDateBusinessDayConvention": {
+          "description": "The business day convention used for adjusting the Termination Date if it would otherwise fall on a day that is not a business date in the specified business centers",
+          "type": "string"
+        },
+        "terminationDateBusinessCenters": {
+          "description": "The set of business centers used to determine whether the Termination Date is a business day or not",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "terminationDateRelativeTo": {
+          "description": "The related reference to the end date of the calculation period, where an unadjustedTerminationDate is not provided",
+          "type": "string"
+        },
+        "relativeTerminationDatePeriod": {
+          "description": "Reflects time period and multiplier (e.g. +/-1, 2 or 3 etc.) from the related reference date",
+          "type": "string"
+        },
+        "relativeTerminationDateBusinessDayConvention": {
+          "description": "The business day convention used for adjusting the Termination Date if it would otherwise fall on a day that is not a business date in the specified business centers",
+          "type": "string"
+        },
+        "relativeTerminationDateBusinessCenters": {
+          "description": "The set of business centers used to determine whether the Termination Date is a business day or not",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "calculationPeriodBusinessDayConvention": {
+          "description": "The business day convention to apply to each calculation period end date if it would otherwise fall on a day that is not a business day in the specified financial business centers",
+          "type": "string"
+        },
+        "calculationPeriodBusinessCenters": {
+          "description": "The set of business centers is used to determine whether a particular day is a business day or not",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "calculationPeriodFrequency": {
+          "description": "The frequency at which calculation period end dates occurs with the regular part of the calculation period schedule.  Reflects time period (e.g. a day, week, month, year or term of the stream) and time period multiplier (e.g. 1, 2 or 3 etc.). For example 1D, 1W, 1M). Term. The period commencing on the effective date and ending on the termination date. The 1T notation is intended for use in contexts where the interval spans the entire term of the trade",
+          "type": "string"
+        },
+        "calculationPeriodRollConvention": {
+          "description": "Used in conjunction with a frequency and the regular period start date of a calculation period, determines each calculation period end date within the regular part of a calculation period schedule    ",
+          "type": "string"
+        },
+        "firstPeriodStartDate": {
+          "description": "The start date of the calculation period if the date falls before the effective date. It must only be specified if it is not equal to the effective date. This date may be subject to adjustment in accordance with a business day convention.",
+          "type": "string",
+          "format": "date"
+        },
+        "firstRegularPeriodStartDate": {
+          "description": "The start date of the regular part of the calculation period schedule. It must only be specified if there is an initial stub calculation period. This day may be subject to adjustment in accordance with any adjustments specified in calculationPeriodDatesAdjustments",
+          "type": "string",
+          "format": "date"
+        },
+        "stubPeriodType": {
+          "description": "Method to allocate any irregular period remaining after regular periods have been allocated between the effective and termination date. \t\n\"ShortInitial\"\nIf there is a non regular period remaining it is left shorter than the streams calculation period frequency and placed at the start of the stream\n\"ShortFinal\"\nIf there is a non regular period remaining it is left shorter than the streams calculation period frequency and placed at the end of the stream\n\"LongInitial\"\nIf there is a non regular period remaining it is placed at the start of the stream and combined with the adjacent calculation period to give a long first calculation period\n\"LongFinal\"\nIf there is a non regular period remaining it is placed at the end of the stream and combined with the adjacent calculation period to give a long last calculation period",
+          "type": "string"
+        },
+        "lastRegularPeriodEndDate": {
+          "description": "The end date of the regular part of the calculation period schedule. It must only be specified if there is a final stub calculation period. This day may be subject to adjustment in accordance with any adjustments specified in calculationPeriodDatesAdjustments.",
+          "type": "string",
+          "format": "date"
+        }
+      }
+    },
+    "PaymentDates": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "paymentFrequency": {
+          "description": "The frequency at which regular payment dates occur. If the payment frequency is equal to the frequency defined in the calculation period dates component then one calculation period contributes to each payment amount. If the payment frequency is less frequent than the frequency defined in the calculation period dates component then more than one calculation period will contribute to the payment amount. A payment frequency more frequent than the calculation period frequency or one that is not a multiple of the calculation period frequency is invalid.  Reflects time period (e.g. a day, week, month, year or term of the stream) and time period multiplier (e.g. 1, 2 or 3 etc.). For example 1D, 1W, 1M)",
+          "type": "string"
+        },
+        "firstPaymentDate": {
+          "description": "The first unadjusted payment date. This day may be subject to adjustment in accordance with any business day convention specified in paymentDatesAdjustments. This element must only be included if there is an initial stub. This date will normally correspond to an unadjusted calculation period start or end date. This is true even if early or delayed payment is specified to be applicable since the actual first payment date will be the specified number of days before or after the applicable adjusted calculation period start or end date with the resulting payment date then being adjusted in accordance with any business day convention specified in paymentDatesAdjustments.",
+          "type": "string",
+          "format": "date"
+        },
+        "lastRegularPaymentDate": {
+          "description": "The last regular unadjusted payment date. This day may be subject to adjustment in accordance with any business day convention specified in paymentDatesAdjustments. This element must only be included if there is a final stub. All calculation periods after this date contribute to the final payment. The final payment is made relative to the final set of calculation periods or the final reset date as the case may be. This date will normally correspond to an unadjusted calculation period start or end date. This is true even if early or delayed payment is specified to be applicable since the actual last regular payment date will be the specified number of days before or after the applicable adjusted calculation period start or end date with the resulting payment date then being adjusted in accordance with any business day convention specified in paymentDatesAdjustments.",
+          "type": "string",
+          "format": "date"
+        },
+        "payRelativeTo": {
+          "description": "Specifies whether the payments occur relative to each adjusted calculation period start date, adjusted calculation period end date or each reset date. The reset date is applicable in the case of certain euro (former French Franc) floating rate indices. Calculation period start date means relative to the start of the first calculation period contributing to a given payment. Similarly, calculation period end date means the end of the last calculation period contributing to a given payment.The valuation date is applicable for Brazilian-CDI swaps.",
+          "type": "string"
+        },
+        "paymentDaysOffsetPeriod": {
+          "description": "If early payment or delayed payment is required, specifies the number of days offset that the payment occurs relative to what would otherwise be the unadjusted payment date. The offset can be specified in terms of either calendar or business days. Even in the case of a calendar days offset, the resulting payment date, adjusted for the specified calendar days offset, will still be adjusted in accordance with the specified payment dates adjustments. This element should only be included if early or delayed payment is applicable, i.e. if the periodMultiplier element value is not equal to zero. An early payment would be indicated by a negative periodMultiplier element value and a delayed payment (or payment lag) would be indicated by a positive periodMultiplier element value",
+          "type": "string"
+        },
+        "paymentDaysOffsetPeriodDayType": {
+          "description": "In the case of an offset specified as a number of days, this element defines whether consideration is given as to whether a day is a good business day or not. If a day type of business days is specified then non-business days are ignored when calculating the offset. The financial business centers to use for determination of business days are implied by the context in which this element is used. This element must only be included when the offset is specified as a number of days. If the offset is zero days then the dayType element should not be included.",
+          "type": "string"
+        },
+        "unadjustedPaymentDate": {
+          "description": "The payment date. This date is subject to adjustment in accordance with any applicable business day convention",
+          "type": "string",
+          "format": "date"
+        },
+        "paymentDateBusinessDayConvention": {
+          "description": "The business day convention to apply to each payment date if it would otherwise fall on a day that is not a business day in the specified financial business centers.",
+          "type": "string"
+        },
+        "paymentDateBusinessCenters": {
+          "description": "The set of business centers is used to determine whether a particular day is a business day or not",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "StatusEnum": {
+      "type": "string",
+      "enum": [
+        "New",
+        "Amended",
+        "Cancelled",
+        "Exercised",
+        "Exited",
+        "Expired",
+        "Cleared",
+        "Terminated"
+      ]
+    },
+    "AssetClassEnum": {
+      "description": "Asset classes currently supported by Jigsaw",
+      "type": "string",
+      "enum": [
+        "Credit",
+        "FX",
+        "Rates",
+        "ETD",
+        "Commodity"
+      ]
+    },
+    "PartyRoleEnum": {
+      "type": "string",
+      "enum": [
+        "Party",
+        "Counterparty",
+        "Transferor",
+        "Transferee",
+        "RemainingParty",
+        "NewRemainingParty",
+        "ExecutingBroker",
+        "BrokerOfClient",
+        "Client",
+        "ClearingBroker",
+        "InitiatingTrader",
+        "ExecutingTrader",
+        "OrderOriginationFirm",
+        "ExecutingSystem",
+        "Exchange",
+        "CustomerAccount",
+        "Custodian",
+        "Beneficiary",
+        "Submitter",
+        "SubmissionPlatform",
+        "ClearingHouse",
+        "ExecutionVenue"
+      ]
+    },
+    "SourcePlatformTypeEnum": {
+      "type": "string",
+      "enum": [
+        "TradeCapture",
+        "CalculationAgent"
+      ]
+    },
+    "ProcessingStatusEnum": {
+      "type": "string",
+      "enum": [
+        "Pending",
+        "MatchedWithEB",
+        "Matched",
+        "Unmatched",
+        "Mismatch",
+        "Affirmed",
+        "UnilateralAffirmation",
+        "Confirmed"
+      ]
+    },
+    "ProcessingRegionEnum": {
+      "type": "string",
+      "enum": [
+        "Tokyo",
+        "London",
+        "NewYork"
+      ]
+    },
+    "SettlementRegionEnum": {
+      "type": "string",
+      "enum": [
+        "APAC",
+        "EMEA",
+        "NA"
+      ]
+    },
+    "ExecutionVenueTypeEnum": {
+      "description": "The venue that the trade was executed on.",
+      "type": "string",
+      "enum": [
+        "AMV",
+        "DCM",
+        "ETP",
+        "ETD",
+        "MTF",
+        "OTF",
+        "OffFacility",
+        "QMTF",
+        "RMO",
+        "SEF"
+      ]
+    },
+    "OptionTypeEnum": {
+      "type": "string",
+      "enum": [
+        "Put",
+        "Call"
+      ]
+    },
+    "ExerciseStyleEnum": {
+      "type": "string",
+      "enum": [
+        "American",
+        "European"
+      ]
+    },
+    "AutomaticExerciseEnum": {
+      "type": "string",
+      "enum": [
+        "Applicable",
+        "Inapplicable"
+      ]
+    }
+  }
+}

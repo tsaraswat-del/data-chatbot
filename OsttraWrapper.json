@@ -1,0 +1,336 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "file:./OsttraWrapper.json",
+    "title": "Osttra wrapper schema",
+    "description": "Version 15.1 last updated 2026-01-27",
+    "type": "object",
+    "required": ["wrapper"],
+    "properties": {
+        "wrapper": {"$ref": "#/$defs/Wrapper"}
+    },
+    "$defs": {
+        "Wrapper": {
+            "type": "object",
+            "required": ["sourcePlatform"],
+            "additionalProperties": false,
+            "properties": {
+                "metaData": {"$ref": "#/$defs/MetaData"},
+                "sourcePlatform": {
+                    "description": "Repeatable block of data associated with chain of platforms from which the submission to Jigsaw originates. Sequence=1 denotes the last platform in the chain prior to submission to Jigsaw",
+                    "type": "array",
+                    "items": {"$ref": "#/$defs/SourcePlatform"},
+                    "minItems": 1
+                },
+                "tradeData": {"$ref": "#/$defs/TradeData"},
+                "eventData": {"$ref": "./OsttraEvent.json#/$defs/EventData"},
+                "cashflowData": {"$ref": "./OsttraCashflow.json#/$defs/CashflowData"}
+            },
+            "oneOf": [
+                {
+                    "required": ["tradeData"]
+                },
+                {
+                    "required": ["eventData"]
+                },
+                {
+                    "required": ["cashflowData"]
+                }
+            ]
+        },
+        "MetaData": {
+            "description": "MetaData fields only to be enriched by Jigsaw",
+            "type": "object",
+            "properties": {
+                "osttraTradeId": {
+                    "description": "Common Osttra reference Id stamped onto the Trade or subsequent Event, applicable for entire lifespan and applicable to both sides (party version and counterparty version)",
+                    "type": "string"
+                },
+                "osttraAckId": {
+                    "description": "Unique Osttra acknowledgmentId, generated when inbound message to JigSaw is processed",
+                    "type": "string"
+                },
+                "version": {
+                    "description": "The version stamped onto the Trade or subsequent Event, incrementing through lifespan",
+                    "type": "number"
+                },
+                "ingestionTimeStamp": {
+                    "description": "The timestamp when Jigsaw processed the submission from the source platform",
+                    "type": "number"
+                },
+                "eventId": {
+                    "description": "Unique (per dataset) sequential number assigned to every trade/event in the trade store",
+                    "type": "integer"
+                },
+                "clearingIndicator": {
+                    "description": "If the trade has been cleared, or a subsequent event is acting on a cleared trade, will be populated with 'yes'",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "Status of the trade mapped from the source platform",
+                    "$ref": "./OsttraShared.json#/$defs/StatusEnum"
+                },
+                "processingStatus": {
+                    "description": "Processing status for the trade, mapped from the source platform's data",
+                    "$ref": "./OsttraShared.json#/$defs/ProcessingStatusEnum"
+                },
+                "partyPerspective": {
+                    "description": "Perspective of the party from whom the trade/event represents, will be a partyReference or partyRole for a party on the trade. Will refer to a party in the PartyDetails block",
+                    "type": "string"
+                },
+                "determinedPartyId": {
+                    "description": "The identifier for the determined party defined by the source platform. Full details for party will be in PartyDetails block",
+                    "type": "string"
+                },
+                "determinedPartyName": {
+                    "description": "The name of the determined party defined by the source platform. Full details for party will be in PartyDetails block",
+                    "type": "string"
+                },
+                "determinedPartyInstitutionName": {
+                    "description": "The institution name of the determined party defined by the source platform. Full details for party will be in PartyDetails block",
+                    "type": "string"
+                },
+                "determinedCounterpartyId": {
+                    "description": "The identifier for the determined countrtparty defined by the source platform. Full details for party will be in PartyDetails block",
+                    "type": "string"
+                },
+                "determinedCounterpartyName": {
+                    "description": "The name of the determined counterparty defined by the source platform. Full details for party will be in PartyDetails block",
+                    "type": "string"
+                },
+                "determinedCounterpartyInstitutionName": {
+                    "description": "The institution name of the determined party defined by the source platform. Full details for party will be in PartyDetails block",
+                    "type": "string"
+                },
+                "positionStatus":{
+                    "description": "Whether the Trade is still considered Active or has reached the Inactive state within Jigsaw",
+                    "type": "string"
+                }
+            }
+        },
+        "SourcePlatform": {
+            "type": "object",
+            "required": [
+                "sequence",
+                "name",
+                "eventType"
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "sequence": {
+                    "description": "Sequence=1 denotes the last platform in the chain prior to submission to Jigsaw",
+                    "type": "integer"
+                },
+                "type": {
+                    "description": "The role of the source platfom where the submission to Jigsaw originated",
+                    "$ref": "./OsttraShared.json#/$defs/SourcePlatformTypeEnum"
+                },
+                "divideIndicator": {
+                    "type": "string",
+                    "description": "Indicator to state the division of trade after clearing. P indicates predivided and D indicates Divided. "
+                },
+                "name": {
+                    "description": "The name of the source platform from which the Trade or subsequent Event has originated",
+                    "type": "string"
+                },
+                "tradeId": {
+                    "description": "The source platform Trade Id for the Trade. For MW in the case of a partial termination this is the Trade Id for the remaining (old) Trade between the OR and RP. For ETD it represents the unique identifier for allocation message. ",
+                    "type": "string"
+                },
+                "priorTradeId": {
+                    "description": "The prior reference of the source platform Trade Id in the case where a a new trade is booked to reverse or amend a cancelled  trade.For MW in the case of a novation, this is the Trade Id for the old Trade between the OR and RP. In the case of a Trade resulting from the physically exercised Swaption, this is the the reference to the original Swaption trade. ",
+                    "type": "string"
+                },
+                "uniqueTransactionId": {
+                    "description": "The UTI (Unique transaction identifier - ISO 23897 compliant)of a trade that is reportable according to a jurisdiction's regulatory requirements.",
+                    "type": "string"
+                },
+                "uniqueTransactionIdFar": {
+                    "description": "The UTI on the far leg of an FXSwap (Unique transaction identifier - ISO 23897 compliant)of a trade that is reportable according to a jurisdiction's regulatory requirements. This is only to be set when processing an FXSwap as a 2 legged trade",
+                    "type": "string"
+                },
+                "eventId": {
+                    "description": "The source platform Id for any subsequent Event following a Trade. For MW this is the eventId reference on a Partial Novation.  Validate logic for Novations. For ETD Client Link it represents unique identifier for Allocation Report message",
+                    "type": "string"
+                },
+                "eventType": {
+                    "description": "Used to capture the original Trade event, followed by any post trade event that occurred on the trade e.g  Amendment, Cancellation, Exit, Novation, Exercise etc. For ETD Client Link it identifies allocation transaction type or CB booked trade. Valid Values: New Replace Cancel",
+                    "type": "string"
+                },
+                "eventReference": {
+                    "description": "Used to capture any supporting information associated to the above post trade event.For MW: - Exit Reason This element will optionally be present if the trade has a trade status of Exit and will contain any reason text entered through the SwapsWire Trader field labeled Exit Reason- Amendment Type will optionally be present if a partial termination is affected, or if a trade has been corrected and contains the value of 'PartialTermination' or 'ErrorCorrection' or Cancellation Type. Cancellation Type will optionally be present if a cancellation is affected for a trade which was booked in error and contains the value 'BookedInError'",
+                    "type": "string"
+                },
+                "clearedEventId": {
+                    "description": "The source platform Id for any subsequent event on a clared trade. For MW this can be used to capture the batch ID used to group all trades that were part of a particular post clearing event e.g. for a compression event all the terminations and new trade(s) will have the same clearedBatchId",
+                    "type": "string"
+                },
+                "clearedEventType": {
+                    "description": "The type of post clearing event that occured on the trade e.g. Netting, Portfolio Transfer, Transition etc",
+                    "type": "string"
+                },
+                "clearedEventReference": {
+                    "description": "Supporting information associated to the post trade event on a cleared trade. For MW this will capture the type of post clearing event that ocurred e.g. for a post clearing event of Netting, the sub category could be Solo Compresssion, Duo Compression, TriOptima Compression or Vendor Compression",
+                    "type": "string"
+                },
+                "dealLinkId": {
+                    "description": "The source platform dealLinkId e.g used when linking legs of an FX Swap. For MW in the case of a partial novation, this is the Trade Id for the new Trade between the RP and EE and in the case of a full novation, this is the Trade Id for the new trade between the RP and EE",
+                    "type": "string"
+                },
+                "strategyLinkId": {
+                    "type": "string",
+                    "description": "Id that links all option strategy contracts"
+                },
+                "submissionTimeStamp": {
+                    "description": "The timestamp when the source platform submitted the Trade or Event",
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "executionTimeStamp": {
+                    "description": "Timestamp when the Trade or Event was captured or agreed on the source platform",
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "receiptTimeStamp": {
+                    "description": "The timestamp when the source platform received the Trade or Event from a submission source",
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "clearedTimeStamp": {
+                    "description": "The timestamp reflecting when the trade was cleared by the CCP",
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "messageId": {
+                    "description": "The source platform messageId for the received Trade or Event",
+                    "type": "string"
+                },
+                "tradeStatus": {
+                    "description": "The latest status of the trade in the source platform.",
+                    "type": "string"
+                },
+                "version": {
+                    "description": "The version stamped onto the trade applicable to both the party and counterparty. For MW, this will represent the lastest major version of the trade",
+                    "type": "string"
+                },
+                "systemVersion": {
+                    "description": "The systemVersion stamped on the trade as a result of a systematic or workflow change initiated by the user.  For MW, this will represent the latest minor version of the trade that is not in the SWML but present in the wrapper sent by DaaS.",
+                    "type": "string"
+                },
+                "messageType": {
+                    "description": "Used for ETD ClientLink. Specifies the message type. Expected Values: AE, AS, J ",
+                    "type": "string"
+                },
+                "eventSource": {
+                    "description": "Indicates the platform where the trade originated",
+                    "type": "string"
+                },
+                "matchId": {
+                    "description": "For ETD Client Link this the Match Id generated once client allocations have been matched. For TradeServ, this is stamped when each trade event is confirmed",
+                    "type": "string"
+                },
+                "anonymousTrade": {
+                    "description": "Indication for anonymity of the counteparty i.e when a trade is anonymous the identity of the counterparty will be hidden",
+                    "type": "boolean"
+                },
+                "initiatorTimeStamp": {
+                    "description": "For TradeServ, this is the matchId of the original position openener",
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "submissionSource": {
+                    "description": "The method of capture for the Trade/Event on the source platform",
+                    "type": "string"
+                },
+                "submissionUserId": {
+                    "description": "The userId associated with the method of capture for the Trade/Event on the source platform",
+                    "type": "string"
+                },
+                "clearingTransactionType": {
+                    "description": "The type of clearing transaction type. eg. House (Member), Client (Non member)",
+                    "type": "string"
+                },
+                "tradeSideId": {
+                    "type": "string",
+                    "title": "Source platform Trade Id for the side of the trade."
+                },
+                "clearedUniqueProductId": {
+                    "type": "string",
+                    "description": "Unique Product Identifier assigned to the derivatie product after it is cleared. "
+                },
+                "ccpNettingId": {
+                    "type": "string",
+                    "description": "Netting ID generated by CCP to Net multiple transactions to offset the settlement risk."
+                },
+                "rtn": {
+                    "type": "string",
+                    "description": "Report Tracking Number is unique identifier assigned by trading venue for reporting of trade and other linked components of trade to regulators."
+                }
+            }
+        },
+        "TradeData": {
+            "type": "object",
+            "required": [
+                "assetClass",
+                "partyDetail"
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "assetClass": {
+                    "description": "Supported Asset classes, bound by enum type",
+                    "$ref": "./OsttraShared.json#/$defs/AssetClassEnum"
+                },
+                "rates": {
+                    "description": "Common attributes for Rates products that are applicable to all legs of a Trade. Optional for a cancellation event",
+                    "$ref": "./OsttraRates.json#/$defs/Rates"
+                },
+                "fx": {
+                    "description": "Common attributes for Fx products that are applicable to all legs of a Trade. Optional for a cancellation event",
+                    "$ref": "./OsttraFX.json#/$defs/Fx"
+                },
+                "etd": {
+                    "description": "Common attributes for Rates products that are applicable to all legs of a Trade. Optional for a cancellation event",
+                    "$ref": "./OsttraETD.json#/$defs/ETD"
+                },
+                "commodity": {
+                    "description": "Common attributes for Commodity products that are applicable to all legs of a Trade. Optional for a cancellation event",
+                    "$ref": "./OsttraCommodity.json#/$defs/Commodity"
+                },
+                "credit":{
+                    "description": "Common attributes for Credit products that are applicable to all legs of a Trade. Optional for a cancellation event",
+                    "$ref": "./OsttraCredit.json#/$defs/Credit"
+                },
+                "partyDetail": {
+                    "description": "A repeatable array of PartyDetail structures, min occurs=1",
+                    "type": "array",
+                    "items": {"$ref": "./OsttraShared.json#/$defs/PartyDetail"},
+                    "minItems": 1
+                },
+                "documentationDetail": {
+                    "description": "DocumenationDetail structure used to model documentation",
+                    "$ref": "./OsttraShared.json#/$defs/DocumentationDetail"
+                },
+                "settlementDetail": {
+                    "description": "SettlementDetail structure used to model settlement",
+                    "$ref": "./OsttraShared.json#/$defs/SettlementDetail"
+                }
+            },
+            "oneOf": [
+                {
+                    "required": ["rates"]
+                },
+                {
+                    "required": ["fx"]
+                },
+                {
+                    "required": ["etd"]
+                },
+                {
+                    "required": ["commodity"]
+                },
+                {
+                    "required": ["credit"]
+                }
+            ]
+        }
+    }
+}

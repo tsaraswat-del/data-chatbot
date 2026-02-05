@@ -1,0 +1,531 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "file:./OsttraCommodity.json",
+    "title": "Osttra Commodity schema",
+    "description": "Version 15.0 last updated 2025-08-20",
+    "type": "object",
+    "properties": {
+        "commodity": {"$ref": "#/$defs/Commodity"}
+    },
+    "$defs": {
+        "Commodity": {
+            "type": "object",
+            "required": [
+                "tradeDate",
+                "productType"
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "tradeDate": {
+                    "description": "The Trade Date",
+                    "type": "string",
+                    "format": "date"
+                },
+                "productType": {
+                    "description": "Supported Products (implicit by Asset class), bound by enum type",
+                    "$ref": "#/$defs/CommodityProductTypeEnum"
+                },
+                "adjustedEffectiveDate": {
+                    "description": "The start date of the contract, adusted for any applicable business day convention",
+                    "type": "string",
+                    "format": "date"
+                },
+                "unadjustedEffectiveDate": {
+                    "description": "The start date of the contract, subject to adjustment for any non business days for the applicable business day convention",
+                    "type": "string",
+                    "format": "date"
+                },
+                "effectiveDateBusinessDayConvention": {
+                    "description": "The business day convention used for adjusting the Effective Date if it would otherwise fall on a day that is not a business date in the specified business centers",
+                    "type": "string"
+                },
+                "effectiveDateBusinessCenters": {
+                    "description": "The set of business centers used to determine whether the Effective Date is a business day or not",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "adjustedTerminationDate": {
+                    "description": "The end date of the contract, adjusted for any applicable business day convention.",
+                    "type": "string",
+                    "format": "date"
+                },
+                "unadjustedTerminationDate": {
+                    "description": "The end date of the contract, subject to adjustment for any non business days for the applicable business day convention",
+                    "type": "string",
+                    "format": "date"
+                },
+                "terminationDateBusinessDayConvention": {
+                    "description": "The business day convention used for adjusting the Termination Date if it would otherwise fall on a day that is not a business date in the specified business centers",
+                    "type": "string"
+                },
+                "terminationDateBusinessCenters": {
+                    "description": "The set of business centers used to determine whether the Termination Date is a business day or not",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "terminationDateRelativeTo": {
+                    "description": "The related reference to the end date of the calculation period, where an unadjustedTerminationDate is not provided",
+                    "type": "string"
+                },
+                "relativeTerminationDatePeriod": {
+                    "description": "Reflects time period and multiplier (e.g. +/-1, 2 or 3 etc.) from the related reference date",
+                    "type": "string"
+                },
+                "relativeTerminationDateBusinessDayConvention": {
+                    "description": "The business day convention used for adjusting the Termination Date if it would otherwise fall on a day that is not a business date in the specified business centers",
+                    "type": "string"
+                },
+                "relativeTerminationDateBusinessCenters": {
+                    "description": "The set of business centers used to determine whether the Termination Date is a business day or not",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "valueDate": {
+                    "description": "Settlement date of Spot or Forward contract",
+                    "type": "string",
+                    "format": "date"
+                },
+                "settlementCurency": {
+                    "description": "ISO currency code of settlement currency",
+                    "type": "string",
+                    "minLength": 3,
+                    "maxLength": 3,
+                    "pattern": "[A-Z]"
+                },
+                "commodityStream": {
+                    "description": "Stream used for Spot, Forward and Swap economic details",
+                    "type": "array",
+                    "items": {"$ref": "#/$defs/CommodityStream"}
+                },
+                "commodityOption": {
+                    "description": "Commodity Option products",
+                    "$ref": "#/$defs/CommodityOption"
+                },
+                "commoditySwaption": {
+                    "description": "Commodity Swaption product",
+                    "$ref": "#/$defs/CommoditySwaption"
+                },
+                "settlementDisruption": {
+                    "description": "Contract terms related to the consequences of Settlement Disruption Events",
+                    "type": "string",
+                    "enum": [
+                        "Negotiation",
+                        "Cancellation and Payment",
+                        "AsSpecifiedInMasterAgreement"
+                    ]
+                }
+            },
+            "oneOf": [
+                {
+                    "required": ["commodityStream"]
+                },
+                {
+                    "required": ["commodityOption"]
+                },
+                {
+                    "required": ["commoditySwaption"]
+                }
+            ]
+        },
+        "CommodityStream": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "priceLeg": {
+                    "description": "Stream representing the payments",
+                    "$ref": "#/$defs/PriceLeg"
+                },
+                "physicalLeg": {
+                    "description": "A reference to the party responsible for making the payments defined by this structure",
+                    "$ref": "#/$defs/PhysicalLeg"
+                }
+            }
+        },
+        "CommodityOption": {
+            "type": "object",
+            "properties": {}
+        },
+        "CommoditySwaption": {
+            "type": "object",
+            "properties": {}
+        },
+        "PriceLeg": {
+            "type": "object",
+            "required": [
+                "payer",
+                "receiver",
+                "priceType"
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "payer": {
+                    "description": "Price payer",
+                    "type": "string"
+                },
+                "receiver": {
+                    "description": "Price receiver",
+                    "type": "string"
+                },
+                "priceType": {
+                    "description": "Type of Payment stream",
+                    "$ref": "#/$defs/PriceTypeEnum"
+                },
+                "price": {
+                    "description": "Price",
+                    "type": "number"
+                },
+                "priceUnit": {
+                    "description": "Price unit",
+                    "type": "string"
+                },
+                "calculationPeriodDatesId": {
+                    "description": "Identifier of the following calculation period dates that could be referenced from another leg",
+                    "type": "string"
+                },
+                "calculationPeriodDates": {
+                    "description": "The calculation periods dates schedule",
+                    "$ref": "./OsttraShared.json#/$defs/CalculationPeriodDates"
+                },
+                "floatingPrice": {
+                    "description": "Floating price block",
+                    "$ref": "#/$defs/FloatingPrice"
+                },
+                "priceCurrency": {
+                    "description": "Price currency",
+                    "type": "string"
+                },
+                "amount": {
+                    "description": "Price x Quantity per settlement frequency",
+                    "type": "number"
+                },
+                "totalAmount": {
+                    "description": "Price x Quantity x number of settlements",
+                    "type": "number"
+                },
+                "calculationPeriodsScheduleReference": {
+                    "description": "Reference to the calculation Period defined in another leg",
+                    "type": "string"
+                },
+                "paymentDates": {
+                    "description": "Payment dates (single or recurring)",
+                    "$ref": "./OsttraShared.json#/$defs/PaymentDates"
+                }
+            }
+        },
+        "PhysicalLeg": {
+            "type": "object",
+            "required": [
+                "commodityType",
+                "quantity"
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "partyDirection": {
+                    "description": "Buy or Sell from Party perspective",
+                    "type": "string",
+                    "enum": [
+                        "Buy",
+                        "Sell"
+                    ]
+                },
+                "commodityType": {
+                    "description": "Type of Physical stream",
+                    "$ref": "#/$defs/PhysicalStreamTypeEnum"
+                },
+                "bullionType": {
+                    "description": "Name of the precious metal",
+                    "$ref": "#/$defs/BullionTypeEnum"
+                },
+                "commoditySubType": {
+                    "description": "Commodity Sub Type",
+                    "type": "string"
+                },
+                "shape": {
+                    "description": "Shape in which the commodity will be delivered",
+                    "type": "string"
+                },
+                "origin": {
+                    "description": "Source of the commodity",
+                    "type": "string"
+                },
+                "grade": {
+                    "description": "Grade of the commodity",
+                    "type": "string"
+                },
+                "brand": {
+                    "description": "Brand to the commodity",
+                    "type": "string"
+                },
+                "instrumentId": {
+                    "description": "Underlying commodity Id to be used for Floating Price contract",
+                    "type": "string"
+                },
+                "instrumentDescription": {
+                    "description": "Underlying commodity description to be used for Floating Price contract",
+                    "type": "string"
+                },
+                "deliveryType": {
+                    "description": "Cash settled or Physically delivered",
+                    "type": "string",
+                    "enum": [
+                        "Cash",
+                        "Physical"
+                    ]
+                },
+                "location": {
+                    "description": "Location where the commodity will be physically delivered or cash settled",
+                    "type": "string"
+                },
+                "deliveryStartPoint": {
+                    "description": "Point of start of transportation",
+                    "type": "string"
+                },
+                "deliveryEndPoint": {
+                    "description": "Point of end of transportation",
+                    "type": "string"
+                },
+                "deliveryCondition": {
+                    "description": "Any other conditions to be met on delivery",
+                    "type": "string"
+                },
+                "quantityUnit": {
+                    "description": "Unit of quantity",
+                    "type": "string"
+                },
+                "quantityFrequency": {
+                    "description": "Quantity frequency",
+                    "type": "string"
+                },
+                "quantity": {
+                    "description": "Quantity per quantity frequency",
+                    "type": "number"
+                },
+                "totalQuantity": {
+                    "description": "Total quantity per quantity frequency",
+                    "type": "number"
+                },
+                "settlementDates": {
+                    "description": "Dates of physical delivery or cash settlement",
+                    "$ref": "#/$defs/SettlementDates"
+                }
+            },
+            "allOf": [
+                {
+                    "if": {
+                        "properties": {
+                            "commodityType": {
+                                "enum": ["Bullion"]
+                            }
+                        }
+                    },
+                    "then": {
+                        "required": ["bullionType"]
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "commodityType": {
+                                "enum": ["Metal"]
+                            }
+                        }
+                    },
+                    "then": {
+                        "required": ["commoditySubType"]
+                    }
+                }
+            ]
+        },
+        "FloatingPrice": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "priceSource": {
+                    "description": "Exchange Id or the publication to refer the price",
+                    "type": "string"
+                },
+                "specifiedPrice": {
+                    "description": "Describes the nature of the underlying price that is observed",
+                    "$ref": "#/$defs/SpecifiedPriceEnum"
+                },
+                "pricingDatesPeriod": {
+                    "description": "Reference to the calculation period dates",
+                    "type": "string"
+                },
+                "dayType": {
+                    "description": "The type of day on which pricing occurs",
+                    "$ref": "#/$defs/DayTypeEnum"
+                },
+                "days": {
+                    "description": "days of the pricing period on which pricing occurs",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "pricingDayBusinessDayConvention": {
+                    "description": "The business day convention to apply to pricing day if it would otherwise fall on a day that is not a business day in the specified financial business centers.",
+                    "type": "string"
+                },
+                "pricingDayBusinessCenters": {
+                    "description": "The set of business centers is used to determine whether a particular day is a business day or not",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "spread": {
+                    "description": "Spread, if any, to be applied to each price",
+                    "type": "number"
+                },
+                "averagingMethod": {
+                    "description": "Method of averaging when multiple pricing dates are considered",
+                    "type": "string"
+                },
+                "roundingMethod": {
+                    "description": "Method of rounding to be used when multiple prices are considered",
+                    "type": "string"
+                },
+                "roundingPrecision": {
+                    "description": "Number of decimal places to be applied when averaging",
+                    "type": "number"
+                }
+            }
+        },
+        "SettlementDates": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "settlementFrequency": {
+                    "description": "The frequency at which the commodity will be delivered/settled.  Reflects time period (e.g. a day, week, month, year or term of the stream) and time period multiplier (e.g. 1, 2 or 3 etc.). For example 1D, 1W, 1M)",
+                    "type": "string"
+                },
+                "firstSettlementDate": {
+                    "description": "The first unadjusted settlement date. This day may be subject to adjustment in accordance with any business day convention specified in settlementmentDatesAdjustments.",
+                    "type": "string",
+                    "format": "date"
+                },
+                "lastRegularSettlementDate": {
+                    "description": "The last regular unadjusted settlement date. This day may be subject to adjustment in accordance with any business day convention specified in settlementmentDatesAdjustments.",
+                    "type": "string",
+                    "format": "date"
+                },
+                "startTime": {
+                    "description": "The time at which delivery will start on each day of the settlement period",
+                    "type": "string",
+                    "format": "time"
+                },
+                "endTime": {
+                    "description": "The time at which delivery will end on each day of the settlement period",
+                    "type": "string",
+                    "format": "time"
+                },
+                "settleRelativeTo": {
+                    "description": "Specifies the reference date relative to which the settlement dates are defined.",
+                    "type": "string"
+                },
+                "settlementDaysOffsetPeriod": {
+                    "description": "Specifies the number of days offset that the settlement occurs relative to what would otherwise be the unadjusted settlement date.",
+                    "type": "string"
+                },
+                "settlementDaysOffsetPeriodDayType": {
+                    "description": "In the case of an offset specified as a number of days, this element defines whether consideration is given as to whether a day is a good business day or not. If a day type of business days is specified then non-business days are ignored when calculating the offset. The financial business centers to use for determination of business days are implied by the context in which this element is used. This element must only be included when the offset is specified as a number of days. If the offset is zero days then the dayType element should not be included.",
+                    "type": "string"
+                },
+                "unadjustedSettlementDate": {
+                    "description": "The settlement date. This date is subject to adjustment in accordance with any applicable business day convention",
+                    "type": "string",
+                    "format": "date"
+                },
+                "settlementDateBusinessDayConvention": {
+                    "description": "The business day convention to apply to each settlement date if it would otherwise fall on a day that is not a business day in the specified financial business centers.",
+                    "type": "string"
+                },
+                "settlementDateBusinessCenters": {
+                    "description": "The set of business centers is used to determine whether a particular day is a business day or not",
+                    "type": "array",
+                    "items": {"type": "string"}
+                }
+            }
+        },
+        "CommodityProductTypeEnum": {
+            "type": "string",
+            "enum": [
+                "CommoditySpot",
+                "CommodityForward",
+                "CommoditySwap",
+                "CommodityNDF",
+                "CommodityNDSwap",
+                "CommodityOption",
+                "CommodityLease"
+            ]
+        },
+        "PriceTypeEnum": {
+            "type": "string",
+            "enum": [
+                "Fixed",
+                "Floating"
+            ]
+        },
+        "PhysicalStreamTypeEnum": {
+            "type": "string",
+            "enum": [
+                "Bullion",
+                "Metal",
+                "Coal",
+                "Electricity",
+                "Gas",
+                "Oil",
+                "Environment"
+            ]
+        },
+        "BullionTypeEnum": {
+            "type": "string",
+            "enum": [
+                "Gold",
+                "Iridium",
+                "Osmium",
+                "Platinum",
+                "Palladium",
+                "Rhenium",
+                "Rhodium",
+                "Ruthenium",
+                "Silver"
+            ]
+        },
+        "SpecifiedPriceEnum": {
+            "type": "string",
+            "enum": [
+                "Afternoon",
+                "Ask",
+                "Bid",
+                "Closing",
+                "High",
+                "Index",
+                "LocationalMarginal",
+                "Low",
+                "MarginalHourly",
+                "MarketClearing",
+                "MeanOfBidAndAsk",
+                "MeanOfHighAndLow",
+                "Midpoint",
+                "Morning",
+                "NationalSingle",
+                "Official",
+                "Opening",
+                "OSP",
+                "Settlement",
+                "Spot",
+                "UnWeightedAverage",
+                "WeightedAverage"
+            ]
+        },
+        "DayTypeEnum": {
+            "type": "string",
+            "enum": [
+                "Business",
+                "Calendar",
+                "CommodityBusiness",
+                "CurrencyBusiness",
+                "ExchangeBusiness",
+                "ScheduledTradingDay"
+            ]
+        }
+    }
+}

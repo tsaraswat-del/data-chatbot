@@ -1,0 +1,23 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "file:./OsttraCommon.json",
+    "title": "Osttra common schema",
+    "description": "Version 15.1 last updated 2026-01-27",
+    "type": "object",
+    "properties": {
+        "wrapper": {"$ref": "./OsttraWrapper.json#/$defs/Wrapper"},
+        "publishEvent": {"$ref": "./OsttraPublishEvent.json#/$defs/PublishEvent"},
+        "exchangeEvent": {"$ref": "./OsttraExchangeEvent.json#/$defs/ExchangeEvent"}
+    },
+    "oneOf": [
+        {
+            "required": ["wrapper"]
+        },
+        {
+            "required": ["publishEvent"]
+        },
+        {
+            "required": ["exchangeEvent"]
+        }
+    ]
+}

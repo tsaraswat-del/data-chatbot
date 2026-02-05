@@ -1,0 +1,911 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "file:./OsttraCredit.json",
+    "title": "Osttra Credit schema",
+    "description": "Version 15.0 last updated 2025-12-15",
+    "type": "object",
+    "properties": {
+        "credit": {"$ref": "#/$defs/Credit"}
+    },
+    "$defs": {
+        "Credit": {
+            "type": "object",
+            "required": [
+                "tradeDate",
+                "productType"
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "tradeDate": {
+                    "description": "The original Trade Date",
+                    "type": "string",
+                    "format": "date"
+                },
+                "confirmationTimeStamp": {
+                    "description": "The timestamp reflecting when the trade or subsequent post trade event was confirmed by the source platform",
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "transactionType":{
+                    "description": "The current confirmed transaction type affecting the position",
+                    "type": "string"
+                },
+                "productType": {
+                    "description": "Supported Credit Products (implicit by Asset class), bound by enum type",
+                    "$ref": "#/$defs/CreditProductTypeEnum"
+                },
+                "subProductType":{
+                    "description": "Supported CDS Sub Products",
+                    "type": "string"
+                },
+                "productTaxonomy": {
+                    "description": "ISDA Product Taxonomy",
+                    "type": "string"
+                },
+                "uniqueProductId": {
+                    "description": "The role of the Unique Product Identifier (UPI, ISO 4914)  is to uniquely identify the product involved in an OTC derivatives transaction that an authority requires, or may require in the future, to be reported to a Trade Repository (TR). ",
+                    "type": "string"
+                },
+                "productClassificationId": {
+                    "description": "The Classification of Financial Instruments (CFI, ISO 10962), is a six-letter-code used to classify and describe the structure and function of a financial instrument (in the form of security or contract) as part of the instrument reference data",
+                    "type": "string"
+                },
+                "productIdentifierIsin": {
+                    "description": "An International Securities Identification Number (ISO 6166 ISIN) is a 12-digit alphanumeric code that uniquely the Credit Derivative Product",
+                    "type": "string"
+                },
+                "activeStatus":{
+                    "description": "SourcePlatform determination of whether the trade/position is active or inactive",
+                    "type": "string"
+                },
+                "inactiveReason":{
+                     "description": "SourcePlatform reason for why a trade/position was made inactive",
+                    "type": "string"
+                },
+                "eventProcessType":{
+                    "description": "The event processing on the DTCC TIW (Rename, Restructuring, Reorganization, Credit) or TradeServ (Bulk Novations or Account Swing) that resulted in the confirmed trade/transaction",
+                    "type": "string"
+                },
+                "eventProcessingId":{
+                    "description": "The Event Processing ID is used to represent when the trade is part of a multi-transaction event (e.g. credit event, compression)",
+                    "type": "string"
+                },
+                "blockId":{
+                    "description": "A reference to a block trade",
+                    "type": "string"
+                },
+                "creditEventOriginalDtccTiwId":{
+                    "description": "DTCC Trade Identifer that identifies the original trade related to the reorganization/restructuring event that triggered the TIW initiated Trade confirmation.",
+                    "type": "string"
+                },
+                "creditEventOriginalPartyTradeId":{
+                    "description": "Original Party TradeId that identifies the original trade upon which a DTCC TIW initiated Credit Event has been applied",
+                    "type": "string"
+                },
+                "creditEconomicDetail": {
+                    "description": "The Credit economic details - covers all products under the credit asset classe",
+                    "$ref": "#/$defs/CreditEconomicDetail"
+                },
+                "workflowDetail": {
+                    "description": "Workflow detail that captures all the possible party and counterparty workflow fields",
+                    "$ref": "#/$defs/WorkFlowDetail"
+                },
+                "legalConfirmationDetail": {
+                    "description": "DocumenationDetail structure used to model documentation",
+                    "$ref": "#/$defs/LegalConfirmationDetail"
+                },
+                "postTradeEventDetail": {
+                    "description": "",
+                    "$ref": "#/$defs/PostTradeEventDetail"
+                },
+                "tiwRegistrationDetail":{
+                    "description": "DtccTiwRegistrationDetail structure",
+                    "$ref": "#/$defs/DtccTiwRegistrationDetail"
+                }
+            }
+        },
+        "CreditEconomicDetail":{
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "effectiveDate": {
+                    "description": "The first day of the term of the trade. This day may be subject to adjustment in accordance with a business day convention. ISDA 2003 Term: Effective Date",
+                    "type": "string",
+                    "format": "date"
+                },
+                "scheduledTerminationDate": {
+                    "description": "The maturity date for the CDS",
+                    "type": "string",
+                    "format": "date"
+                },
+                "fixedRatePayer": {
+                    "description": "The Fixed Rate Payer is the party that is 'buying' the cds",
+                    "type": "string"
+                },
+                "floatingRatePayer": {
+                    "description": "The Floating Rate Payer is the party that is 'selling' the cds",
+                    "type": "string"
+                },
+                "dateAdjustmentBusinessCenters": {
+                    "description": "The set of business centers is used to determine whether a particular day is a business day or not",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "originalTradeNotionalAmount": {
+                    "description": "The original notional amount of the Trade (or EE/RP leg) when the position was created",
+                    "type": "number"
+                },
+                "originalTradeNotionalCurrency": {
+                    "description": "The original notional currency of the Trade (or EE/RP leg) when the position was created",
+                    "type": "string"
+                },
+                "additionalTerms": {
+                    "description": "Represents information contained in the Additional Terms field of the 2003 ISDA Master Credit Derivatives confirm.",
+                    "type": "string"
+                },
+                "optionalEarlyTerminationApplicable": {
+                    "description": "Indicates that optional early termination is applicable",
+                    "type": "string"
+                },
+                "modifiedEquityDeliveryApplicable": {
+                    "description": "Indicates that modified equity delivery is applicable",
+                    "type": "string"
+                },
+                "cashSettlementRecoveryPrice":{
+                    "description": "Used for Fixed Recovery, specifies the recovery level, determined at contract inception, to be applied on a default. Used to calculate the amount paid by the seller to the buyer for cash settlement on the cash settlement date. Amount calculation is (1 minus the Cash Settlement Recovery Price) multiplied by the Floating Rate Payer Calculation Amount. The currency will be derived from the Floating Rate Payer Calculation Amount.",
+                    "type": "string"
+                },
+                "cashSettlementFixedSettlement":{
+                    "description": "Used for Recovery Lock, to indicate whether fixed Settlement is Applicable or Not Applicable",
+                    "type": "string"
+                },
+                "independentAmountPaymentPercent":{
+                    "description": "Independent amount as a percentage of the transactions's value",
+                    "type": "string"
+                },
+                "independentAmountPayer":{
+                    "description": "The independent amount payer",
+                    "type": "string"
+                },
+                "independentAmountReceiver":{
+                    "description": "The independent amount receiver ",
+                    "type": "string"
+                },
+                "mortgageInsurerApplicable":{
+                    "description": "Indicates that the mortgage Insurer is applicable",
+                    "type": "string"
+                },
+                "mortgageLegalFinalMaturityDate":{
+                    "description": "The date when the principal amount of a security becomes due and payable",
+                    "type": "string",
+                    "format": "date"
+                },
+                "mortgageDesignatedMaturity":{
+                    "description": "A period multiplier",
+                    "type": "string"
+                },
+                "mortgageOriginalPrincipalAmount":{
+                    "description": "The initial issued amount of the mortgage obligation",
+                    "type": "number"
+                },
+                "mortgageInitialFactor":{
+                    "description": "The part of the mortgage that is outstanding on trade inception, i.e. has not been repaid yet as principal",
+                    "type": "string"
+                },
+                "mortgageSector":{
+                    "description": "The sector classification of the mortgage obligation",
+                    "type": "string"
+                },
+                "referencePolicyApplicable":{
+                    "description": "Indicates that the reference policy is applicable on a mortgage-backed security",
+                    "type": "string"
+                },
+                "referencePrice":{
+                    "description": "Used to determine a settlement amount",
+                    "type": "string"
+                },
+                "loanCreditAgreementDate":{
+                    "description": "The credit agreement date is the closing date (the date where the agreement has been signed) for the loans in the credit agreement",
+                    "type": "string",
+                    "format": "date"
+                },
+                "loanFacilityType":{
+                    "description": "The type of loan facility",
+                    "type": "string"
+                },
+                "loanNameOfBorrower":{
+                    "description": "The borrower of the loan",
+                    "type": "string"
+                },
+                "trancheAttachmentPoint":{
+                    "description": "Lower bound percentage of the loss that the Tranche can endure, expressed as a decimal. The difference between Attachment and Exhaustion points is call the width of the Tranche.",
+                    "type": "string"
+                },
+                "trancheExhaustionPoint":{
+                    "description": "Upper bound percentage of the loss that the Tranche can endure, expressed as a decimal",
+                    "type": "string"
+                },
+                "additionalComments": {
+                    "description": "Any additional comments associated with the trade",
+                    "type": "string"
+                },
+                "referenceInformationDetail": {
+                    "description": "The reference information that may be applicable for all the different types of credit default swap products",
+                    "$ref": "#/$defs/ReferenceInformationDetail"
+                },
+                "feeLegDetail": {
+                    "description": "The economic details for the Fee Leg of a credit default swap",
+                    "$ref": "#/$defs/FeeLegDetail"
+                },
+                "protectionTermsDetail": {
+                    "description": "The protection terms details for a credit default swap",
+                    "$ref": "#/$defs/ProtectionTermsDetail"
+                },
+                "swaptionDetail":{
+                    "description": "The swaption details, if the CDS is a swaption",
+                    "$ref": "#/$defs/SwaptionDetail"
+                }
+            }
+        },
+        "ReferenceInformationDetail":{
+            "type": "object",
+            "additionalProperties": false,
+            "properties":{
+                "redId": {
+                    "description": "S&P Reference Entity Data - Red 6, Red  9, or SRO Red9 ID for the Trade",
+                    "type": "string"
+                },
+                "redIdType": {
+                    "description": "Either Red6 or Red9 or SRORed9",
+                    "type": "string"
+                },
+                "referenceEntityName": {
+                    "description": "The name of the reference entity/index",
+                    "type": "string"
+                },
+                "submittedObligation": {
+                    "description": "This is the ISIN or SRO ISIN or CUSIP as submitted by the party to the trade",
+                    "type": "string"
+                },
+                "submittedReferenceEntityName": {
+                    "description": "This is the Reference Entity Name as submitted by the party to the trade",
+                    "type": "string"
+                },
+                "sroIsin": {
+                    "description": "Standard Reference Obligation ISIN (SRO ISIN)",
+                    "type": "string"
+                },
+                "isin": {
+                    "description": "An International Securities Identification Number (ISIN) is a 12-digit alphanumeric code that uniquely identifies a underlying asset/reference obligation",
+                    "type": "string"
+                },
+                "cusip": {
+                    "description": "The CUSIP identifier that uniquely identifies a underlying asset/reference obligation",
+                    "type": "string"
+                },
+                "bloombergId": {
+                    "description": "The Bloomberg identifier that uniquely identifies a underlying asset/reference obligation",
+                    "type": "string"
+                },
+                "referenceUniqueProductId": {
+                    "description":"Applicable to MDX Index where RedIds are not in use",
+                    "type": "string"
+                },
+                "securedListApplicable": {
+                    "description": "Indicates that a secured list  is applicable",
+                    "type": "string"
+                },
+                "indexAnnexDate": {
+                    "description": "The CDS index series annex date.",
+                    "type": "string",
+                    "format": "date"
+                },
+                "settledEntityMatrixSource": {
+                    "description": "Relevant settled entity matrix source.",
+                    "type": "string"
+                },
+                "settledEntityMatrixDate": {
+                    "description": "Specifies the publication date of the applicable version of the matrix.",
+                    "type": "string",
+                    "format": "date"
+                },
+                "seniority": {
+                    "description": "Seniority of the underlying asset/reference",
+                    "type": "string"
+                }
+            }
+        },
+        "FeeLegDetail":{
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "firstPaymentDate": {
+                    "description": "The first unadjusted fixed rate payer payment date.  ISDA 2003 Term: Fixed Rate Payer Payment Date",
+                    "type": "string",
+                    "format": "date"
+                },
+                "firstPaymentPeriodAccrualStartDate": {
+                    "description": "The start date of the initial calculation period if such date is not equal to the trade’s effective date. It must only be specified if it is not equal to the effective date. ",
+                    "type": "string",
+                    "format": "date"
+                },
+                "fixedRatePerAnnum": {
+                    "description": "The calculation period fixed rate. A per annum rate, expressed as a decimal. A fixed rate of 5% would be represented as 0.05.",
+                    "type": "string"
+                },
+                "fixedAmountPaymentDelayApplicable": {
+                    "description": "Whether payment delays are applicable to the fixed Amount",
+                    "type": "string"
+                },
+                "initialPaymentAmount": {
+                    "description": "Specifies a one off fixed initial payment amount that is payable by the payer to the receiver on the initial payment date. ",
+                    "type": "number"
+                },
+                "initialPaymentCurrency": {
+                    "description": "The initial payment currency",
+                    "type": "string"
+                },
+                "initialPaymentDate": {
+                    "description": "The initial payment date",
+                    "type": "string",
+                    "format": "date"
+                },
+                "initialPaymentPayer": {
+                    "description": "The initial payment payer",
+                    "type": "string"
+                },
+                "initialPaymentReceiver": {
+                    "description": "The initial payment receiver",
+                    "type": "string"
+                },
+                "paymentFrequencyMonths": {
+                    "description": "The time interval in months between regular fixed rate payer payment dates.",
+                    "type": "string"
+                },
+                "singlePaymentAmount": {
+                    "description": "Specifies a single fixed amount that is payable by the buyer to the seller on the fixed rate payer payment date",
+                    "type": "number"
+                },
+                "singlePaymentCurrency": {
+                    "description": "The single payment currency",
+                    "type": "string"
+                },
+                "singlePaymentDate": {
+                    "description": "The single payment date",
+                    "type": "string",
+                    "format": "date"
+                },
+                "singlePaymentPayer": {
+                    "description": "The single payment payer",
+                    "type": "string"
+                },
+                "singlePaymentReceiver": {
+                    "description": "The single payment receiver",
+                    "type": "string"
+                },
+                "floatingPeriodicPaymentPayer": {
+                    "description": "The floating Periodic Payment Payer",
+                    "type": "string"
+                },
+                "floatingPeriodicPaymentReceiver": {
+                    "description": "The floating Periodic Payment Receiver",
+                    "type": "string"
+                },
+                "floatingRateForInitialCalculationPeriod": {
+                    "description": "The initial floating rate reset agreed between the principal parties involved in the trade. This is assumed to be the first required reset rate for the first regular calculation period.",
+                    "type": "string"
+                },
+                "floatingRateIndex": {
+                    "description": "The floating rate index name",
+                    "type": "string"
+                },
+                "floatingRateSpread": {
+                    "description": "The floating rate spread",
+                    "type": "string"
+                },
+                "initialFixingAmount": {
+                    "description": "The initial fixing amount",
+                    "type": "number"
+                },
+                "initialFixingCurrency": {
+                    "description": "The initial fixing currency ",
+                    "type": "string"
+                },
+                "scheduledFinalFixingDate": {
+                    "description": "Final fixing date used in determination of a calculation period amount.",
+                    "type": "string",
+                    "format": "date"
+                }
+            }
+        },
+         "ProtectionTermsDetail":{
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "notionalAmount": {
+                    "description": "The current notional amount of the Trade (Position). Includes any pte activity that results in a change to current notional",
+                    "type": "number"
+                },
+                "notionalCurrency": {
+                    "description": "The notional currency of the Trade",
+                    "type": "string"
+                },
+                "restructuringEvents": {
+                    "description": "Whether a Credit Event is applicable",
+                    "type": "string"
+                },
+                "interestShortfallCapApplicable": {
+                    "description": "Whether interest shortfall cap is applicable",
+                    "type": "string"
+                },
+                "interestShortfallCapBasis": {
+                    "description": "Specifies the nature of the interest Shortfall cap (i.e. Fixed or Variable ) in the case where it is applicable. ISDA 2003 Term: Interest Shortfall Cap",
+                    "type": "string"
+                },
+                "interestShortfallCompoundingApplicable": {
+                    "description": "Whether interest shortfall compounding is applicable",
+                    "type": "string"
+                },
+                "interestShortfallRateSource": {
+                    "description": "The rate source in the case of a variable cap.",
+                    "type": "string"
+                },
+                "stepUpProvisionsApplicable": {
+                    "description": "Whether stepup provisions are applicable",
+                    "type": "string"
+                },
+                "wacCapInterestProvisionApplicable": {
+                    "description": "Whether the wap cap interest provision is applicable",
+                    "type": "string"
+                },
+                "designatedPriority": {
+                    "description": "Applies to Loan CDS, to indicate what lien level is appropriate for a deliverable obligation",
+                    "type": "string"
+                },
+                "excludedDeliverables": {
+                    "description": "A free format string to specify any excluded obligations or deliverable obligations, as the case may be, of the reference entity or excluded types of obligations or deliverable obligations. ISDA 2003 Term: Excluded Obligations/Excluded Deliverable Obligations",
+                    "type": "string"
+                },
+                "cashSettlementOnlyApplicable": {
+                    "description": "Whether cash settlement only is applicable",
+                    "type": "string"
+                },
+                "continuityApplicable": {
+                    "description": "Whether continuity is applicable",
+                    "type": "string"
+                },
+                "deliveryOfCommitmentsApplicable": {
+                    "description": "Whether delivery of commitments is applicable",
+                    "type": "string"
+                }
+            }
+        },
+        "SwaptionDetail": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "swaptionBuyer": {
+                    "description": "The party that is buying the swaption",
+                    "type": "string"
+                },
+                "swaptionSeller": {
+                    "description": "The party that is selling the swaption",
+                    "type": "string"
+                },
+                "swaptionType": {
+                    "description": "The type of swaption",
+                    "type": "string"
+                },
+                "swaptionExerciseStyle": {
+                    "description": "The exercise style of swaption",
+                    "type": "string"
+                },
+                "swaptionExpirationDate": {
+                    "description": "The expiration date. This date is subject to adjustment in accordance with any applicable business day convention.",
+                    "type": "string",
+                    "format": "date"
+                },
+                "swaptionSettlementStyle": {
+                    "description": "The settlement style of swaption",
+                    "type": "string"
+                },
+                "swaptionStrikePrice": {
+                    "description": "The strike price of swaption",
+                    "type": "string"
+                },
+                "swaptionStrikeSpread": {
+                    "description": "The strike spread of swaption",
+                    "type": "string"
+                },
+                "swaptionPremiumPayer": {
+                    "description": "The party responsible for paying the premium payment",
+                    "type": "string"
+                },
+                "swaptionPremiumReceiver": {
+                    "description": "The party responsible for receiving the premium payment",
+                    "type": "string"
+                },
+                "swaptionPremiumPaymentAmount": {
+                    "description": "The premium payment amount",
+                    "type": "number"
+                },
+                "swaptionPremiumPaymentCurrency": {
+                    "description": "The premium payment currency",
+                    "type": "string"
+                },
+                "swaptionPremiumPaymentDate": {
+                    "description": "The payment date. This date is subject to adjustment in accordance with any applicable business day convention.",
+                    "type": "string",
+                    "format": "date"
+                },      
+                "ccpOfUnderlyingSwap": {
+                    "description": "The CCP (clearing house) of the underlying swap",
+                    "type": "string"
+                }
+            }
+        },
+        "WorkFlowDetail":{
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "partyDesignatedPartyId": {
+                    "description": "The content of this field is free-form, and the type of information is at the users discretion. Viewable by counterparty",
+                    "type": "string"
+                },
+                "partyBrokerName": {
+                    "description": "The content of this field is free-form, and the type of information is at the users discretion. Viewable by counterparty",
+                    "type": "string"
+                },
+                "partyEtradingTrn": {
+                    "description": "The content of this field is free-form, and the type of information is at the users discretion. Viewable by counterparty",
+                    "type": "string"
+                },
+                "partyDeskId": {
+                    "description": "The content of this field is free-form, and the type of information is at the users discretion. Viewable by counterparty",
+                    "type": "string"
+                },
+                "partySuperId": {
+                    "description": "The content of this field is free-form, and the type of information is at the users discretion. Viewable by counterparty",
+                    "type": "string"
+                },
+                "partyBranchLocation": {
+                    "description": "The content of this field is free-form, and the type of information is at the users discretion. Viewable by counterparty",
+                    "type": "string"
+                },
+                "partyMidMarketPriceType": {
+                    "description": "The content of this field is free-form, and the type of information is at the users discretion. Viewable by counterparty",
+                    "type": "string"
+                },
+                 "partyMidMarketPriceValue": {
+                    "description": "The content of this field is free-form, and the type of information is at the users discretion. Viewable by counterparty",
+                    "type": "string"
+                },
+                "partyComment": {
+                    "description": "The content of this field is free-form, and the type of information is at the users discretion. Not viewable by counterparty",
+                    "type": "string"
+                },
+                "counterpartyDesignatedPartyId": {
+                    "description": "The content of this field is free-form, and the type of information is at the users discretion. Viewable by counterparty",
+                    "type": "string"
+                },
+                "counterpartyBrokerName": {
+                    "description": "The content of this field is free-form, and the type of information is at the users discretion. Viewable by counterparty",
+                    "type": "string"
+                },
+                "counterpartyEtradingTrn": {
+                    "description": "The content of this field is free-form, and the type of information is at the users discretion. Viewable by counterparty",
+                    "type": "string"
+                },
+                "counterpartyDeskId": {
+                    "description": "The content of this field is free-form, and the type of information is at the users discretion. Viewable by counterparty",
+                    "type": "string"
+                },
+                "counterpartySuperId": {
+                    "description": "The content of this field is free-form, and the type of information is at the users discretion. Viewable by counterparty",
+                    "type": "string"
+                },
+                "counterpartyBranchLocation": {
+                    "description": "The content of this field is free-form, and the type of information is at the users discretion. Viewable by counterparty",
+                    "type": "string"
+                },
+                "counterpartyMidMarketPriceType": {
+                    "description": "The content of this field is free-form, and the type of information is at the users discretion. Viewable by counterparty",
+                    "type": "string"
+                },
+                "counterpartyMidMarketPriceValue": {
+                    "description": "The content of this field is free-form, and the type of information is at the users discretion. Viewable by counterparty",
+                    "type": "string"
+                }
+            }
+        },
+        "LegalConfirmationDetail":{
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "documentationType": {
+                    "description": "Master documentation type, if populated, one of SwaptionSupplement, Matrix, StandardTermsSupplement or MasterConfirmation",
+                    "type": "string"
+                },
+                "masterDocumentationTransactionType": {
+                    "description": "The master documentation transaction type",
+                    "type": "string"
+                },
+                "masterDocumentationDate": {
+                    "description": "The master documentation date",
+                    "type": "string",
+                    "format": "date"
+                },
+                "underlyingDocumentationType": {
+                    "description": "The underlying documentation type for a CDSSwaption or CDSIndexSwaption",
+                    "type": "string"
+                },
+                "underlyingMasterDocumentTransactionType": {
+                    "description": "The underlying master documentation transaction type for a CDSSwaption or CDSIndexSwaption",
+                    "type": "string"
+                },
+                "underlyingMasterDocumentDate": {
+                    "description": "The underlying master documentation date for a CDSSwaption or CDSIndexSwaption",
+                    "type": "string"
+                },
+                "contractualDefinitions": {
+                    "description": "The definitions such as those published by ISDA that will define the terms of the trade",
+                    "type": "string"
+                },
+                "masterAgreementType": {
+                    "description": "The agreement executed between the parties and intended to govern product-specific credit derivatives transactions between those parties",
+                    "type": "string"
+                },
+                "masterAgreementDate": {
+                    "description": "The date on which the master agreement was signed",
+                    "type": "string",
+                    "format": "date"
+                },
+                "masterAgreementVersion": {
+                    "description": "The version of the master agreement",
+                    "type": "string"
+                },
+                "masterConfirmationType": {
+                    "description": "The type of master confirmation executed between the parties",
+                    "type": "string"
+                },
+                "masterConfirmationDate": {
+                    "description": "The date of the confirmation executed between the parties and intended to govern all relevant transactions between those parties",
+                    "type": "string",
+                    "format": "date"
+                },
+                "masterConfirmationAnnexDate": {
+                    "description": "The date that an annex to the master confirmation was executed between the parties",
+                    "type": "string",
+                    "format": "date"
+                },
+                "matrixType": {
+                    "description": "Identifies the form of applicable matrix",
+                    "type": "string"
+                },
+                "matrixPublicationDate": {
+                    "description": "Specifies the publication date of the applicable version of the matrix. When this element is omitted, the ISDA supplemental language for incorporation of the relevant matrix will generally define rules for which version of the matrix is applicable.",
+                    "type": "string",
+                    "format": "date"
+                },
+                "matrixTerm": {
+                    "description": "Defines any applicable key into the relevant matrix",
+                    "type": "string"
+                },
+                "iSDACreditMonolineInsurers": {
+                    "description": "Indicates if a ISDA Credit Monoline Insurers contractual supplement will apply to the trade",
+                    "type": "string"
+                },
+                "iSDADeliveryRestrictions": {
+                    "description": "Indicates if a ISDA Delivery Restrictions contractual supplement will apply to the trade",
+                    "type": "string"
+                },
+                "iSDASecuredDeliverableObligationCharacteristic": {
+                    "description": "Indicates if a ISDA Secured Deliverable Obligation Characteristic contractual supplement will apply to the trade",
+                    "type": "string"
+                },
+                "iSDARecoveryLock": {
+                    "description": "Indicates if a ISDA Recovery Lock contractual supplement will apply to the trade",
+                    "type": "string"
+                },
+                "iSDAFixedRecovery": {
+                    "description": "Indicates if a ISDA Fixed Recovery contractual supplement will apply to the trade",
+                    "type": "string"
+                },
+                "contractualTermsSupplementType": {
+                    "description": "The contractual terms supplement type",
+                    "type": "string"
+                },
+                "contractualTermsSupplementPublicationDate": {
+                    "description": "The contractual terms supplement publication date",
+                    "type": "string",
+                    "format": "date"
+                },
+                "swaptionSupplementType": {
+                    "description": "MDTT for swaption trades",
+                    "type": "string"
+                },
+                "swaptionSupplementPublicationDate": {
+                    "description": "The swaption supplement publication date",
+                    "type": "string",
+                    "format": "date"
+                },
+                "calculationAgent": {
+                    "description": "The ISDA calculation agent responsible for performing duties as defined in the applicable product definitions",
+                    "type": "string"
+                },
+                "calculationAgentBusinessCenter": {
+                    "description": "The city in which the office through which ISDA Calculation Agent is acting for purposes of the transaction is located",
+                    "type": "string"
+                }
+            }
+        },
+        "PostTradeEventDetail":{
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "pteTransactionDate": {
+                    "description": "The transaction date for the post trade event (PTE)",
+                    "type": "string",
+                    "format": "date"
+                },
+                "pteEffectiveDate": {
+                    "description": "The effective date for the post trade event. Will be on or after the pteTransactionDate",
+                    "type": "string",
+                    "format": "date"
+                },
+                "pteAffectedNotionalAmount": {
+                    "description": "The affected notional amount for the PTE. (What notional is changing)",
+                    "type": "number"
+                },
+                "pteAffectedNotionalCurrency": {
+                    "description": "The affected notional currency for the PTE",
+                    "type": "string"
+                },
+                "pteOutstandingNotionalAmount": {
+                    "description": "The outstanding notional amount for the PTE. (What notional is left)",
+                    "type": "number"
+                },
+                "pteOutstandingNotionalCurrency": {
+                    "description": "The outstanding notional currency for the PTE",
+                    "type": "string"
+                },
+                "ptePaymentAmount": {
+                    "description": "The payment amount associated with the PTE",
+                    "type": "number"
+                },
+                "ptePaymentCurrency": {
+                    "description": "The payment currency associated with the PTE",
+                    "type": "string"
+                },
+                "ptePaymentDate": {
+                    "description": "The payment date associated with the PTE",
+                    "type": "string",
+                    "format": "date"
+                },
+                "ptePaymentPayer": {
+                    "description": "The payment payer associated with the PTE",
+                    "type": "string"
+                },
+                "ptePaymentReceiver": {
+                    "description": "The payment receiver associated with the PTE",
+                    "type": "string"
+                },
+                "exerciseEventType": {
+                    "description": "The settlement style for the exercise, one of Cash or Physical",
+                    "type": "string"
+                },
+                "exitAdditionalMessage": {
+                    "description": "Verbose exit message",
+                    "type": "string"
+                },
+                "exitMessage": {
+                    "description": "Numeric code for exit",
+                    "type": "string"
+                },
+                "fullFirstCalculationPeriodApplicable": {
+                    "description": "Whether the full first calculation period is applicable on assignments",
+                    "type": "string"
+                },
+                "transferee": {
+                    "description": "The source platform id for the transferee on assignments",
+                    "type": "string"
+                },
+                "transferor": {
+                    "description": "The source platform id for the transferor on assignments",
+                    "type": "string"
+                },
+                "remainingParty": {
+                    "description": "The source platform id for the remaining party on assignments",
+                    "type": "string"
+                },
+                "remainingPartyTwo": {
+                    "description": "The source platform id for the remaining party two on four way assignments",
+                    "type": "string"
+                },
+                "remainingPartyOldTradeId":{
+                    "description": "The remaining party's TradeId on the OR/RP assignment leg",
+                    "type": "string"
+                },
+                "remainingPartyNewTradeId":{
+                    "description": "The remaining party's TradeId on the EE/RP assignment leg",
+                    "type": "string"
+                },
+                "transfereeTradeId":{
+                    "description": "The transferee party's TradeId on the EE/RP assignment leg",
+                    "type": "string"
+                },
+                "transferorTradeId":{
+                    "description": "The transferor party's TradeId on the OR/RP assignment leg",
+                    "type": "string"
+                },
+                "legType":{
+                    "description": "Whether this trade is the old leg (ORRP) or was created as a result of the new leg (EERP) of an assignment",
+                    "type": "string"
+                },
+                "novationType":{
+                    "description": "The type of novation. Current values C-Only, C=C relate to Novation consent type",
+                    "type": "string"
+                },
+                "ncmId":{
+                    "description": "The id for novation originating from a novation consent platform",
+                    "type": "string"
+                },
+                "adheredEventId":{
+                    "description": "The id for a bulk novation/account swing adhered event",
+                    "type": "string"
+                },
+                "adheredEventName":{
+                    "description": "The name for a bulk novation/account swing adhered event",
+                    "type": "string"
+                },
+                "adheredEventProcessingStatus":{
+                    "description": "The processing status for a bulk novation/account swing adhered event",
+                    "type": "string"
+                },
+                "adheredEventType":{
+                    "description": "The type of adhered event, one of BulkNovation or AccountSwing",
+                    "type": "string"
+                }
+            }
+        },
+        "DtccTiwRegistrationDetail":{
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "dtccTiwId":{
+                    "description": "The unique DTCC Trade Identifer provided at point of trade registration at the DTCC TIW. Applies to both sides of a position, maintained across lifecycle of trade",
+                    "type": "string"
+                },
+                "dtccTiwRegistrationStatus":{
+                    "description":"Registration status of position at the DTCC TIW - always Registered",
+                    "type": "string"
+                },
+                "dtccTiwCurrentNotionalAsOfDate":{
+                    "description":"Date reflecting the latest effective date of any activity that affects the notional for this position at the DTCC TIW",
+                    "type": "string",
+                    "format": "date"
+                },
+                "dtccTiwCurrentNotionalAmount": {
+                    "description": "The current notional amount for this position at the DTCC TIW",
+                    "type": "number"
+                },
+                "dtccTiwCurrentNotionalCurrency": {
+                    "description": "The current notional currency for this position at the DTCC TIW",
+                    "type": "string"
+                },
+                "dtccTiwOpenNotionalAmount": {
+                    "description": "The current open notional amount for this position at the DTCC TIW",
+                    "type": "number"
+                }
+            }
+        },
+        "CreditProductTypeEnum": {
+            "type": "string",
+            "enum": [
+                "CreditDefaultSwapShort",
+                "CreditDefaultSwapIndex",
+                "CreditDefaultSwapIndexTranche"
+            ]
+        }
+    }
+}

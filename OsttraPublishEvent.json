@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "file:./OsttraPublishEvent.json",
+  "title": "Osttra publish event schema",
+  "description": "Version 15.1 last updated 2026-01-27",
+  "type": "object",
+  "required": [
+    "publishEvent"
+  ],
+  "properties": {
+    "publishEvent": {
+      "description": "The root container for the publishing event, housing metadata and the core message payload.",
+      "$ref": "#/$defs/PublishEvent"
+    }
+  },
+  "$defs": {
+    "PublishEvent": {
+      "type": "object",
+      "description": "A structured event containing publisher details, event metadata, and the transactional data.",
+      "required": [
+        "publisherInfo",
+        "eventInfo",
+        "eventPayload"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "publisherInfo": {
+          "description": "Internal enrichment data specifically managed by the Jigsaw publisher service.",
+          "$ref": "#/$defs/PublisherInfo"
+        },
+        "eventInfo": {
+          "description": "Metadata describing the event's origin, type, and processing lifecycle.",
+          "$ref": "#/$defs/EventInfo"
+        },
+        "eventPayload": {
+          "description": "The actual business content of the event, including current and historical data events.",
+          "$ref": "#/$defs/EventPayload"
+        }
+      }
+    },
+    "PublisherInfo": {
+      "description": "MetaData fields only to be enriched by Jigsaw publisher service",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "serviceId": {
+          "description": "The unique identifier of the publishing service",
+          "type": "string"
+        },
+        "submissonTimeStamp": {
+          "description": "The specific time at which the Jigsaw service submitted this message.",
+          "type": "string"
+        },
+        "offset": {
+          "description": "A unique identifier calculated by the Jigsaw publisher service, used as a cursor for fetching previous records.",
+          "type": "string"
+        }
+      }
+    },
+    "EventInfo": {
+      "type": "object",
+      "description": "Common auditing fields used for tracking and identifying the event across services.",
+      "additionalProperties": false,
+      "properties": {
+        "eventId": {
+          "description": "A unique numeric identifier for this specific event instance.",
+          "type": "integer"
+        },
+        "eventType": {
+          "description": "Categorizes the action being performed.",
+          "type": "string"
+        },
+        "eventSource": {
+          "description": "The name of the system or application that originally triggered the event.",
+          "type": "string"
+        },
+        "eventEntity": {
+          "description": "The business entity class associated with the event.",
+          "type": "string"
+        },
+        "receiptTimeStamp": {
+          "description": "The timestamp when the event was first captured by the system.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "submissionTimeStamp": {
+          "description": "The timestamp when the event was dispatched to the publishing queue.",
+          "type": "string",
+          "format": "date-time"
+        },
+        "serviceId": {
+          "description": "Identifier for the service instance responsible for this specific event processing.",
+          "type": "string"
+        },
+        "ackId": {
+          "description": "Acknowledgment ID used to correlate asynchronous responses with this event.",
+          "type": "string"
+        }
+      }
+    },
+    "EventPayload": {
+      "type": "object",
+      "description": "Container for the current snapshot of the data and any preceding versions for auditing or diffing.",
+      "required": [
+        "current"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "current": {
+          "description": "The latest, active state of the event data.",
+          "$ref": "#/$defs/CurrentNode"
+        },
+        "previous": {
+          "description": "An optional history of previous states, wrapped for consistency.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "wrapper"
+            ],
+            "properties": {
+              "wrapper": {
+                "description": "The historical data state wrapped in the standard OsttraWrapper format.",
+                "$ref": "OsttraWrapper.json#/$defs/Wrapper"
+              }
+            }
+          }
+        }
+      }
+    },
+    "CurrentNode": {
+      "type": "object",
+      "description": "Determines the structure of the current payload.",
+      "oneOf": [
+        {
+          "required": [
+            "exchangeEvent"
+          ]
+        },
+        {
+          "required": [
+            "wrapper"
+          ]
+        }
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "wrapper": {
+          "description": "Standard business data structure as defined in the OsttraWrapper schema.",
+          "$ref": "./OsttraWrapper.json#/$defs/Wrapper"
+        },
+        "exchangeEvent": {
+          "description": "Exchange-specific event details as defined in the OsttraExchangeEvent schema.",
+          "$ref": "./OsttraExchangeEvent.json#/$defs/ExchangeEvent"
+        }
+      }
+    }
+  }
+}

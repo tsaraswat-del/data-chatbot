@@ -1,0 +1,180 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "file:./OsttraCashflow.json",
+    "title": "Osttra Cashflow schema",
+    "description": "Version 15.0 last updated 2025-12-07",
+    "type": "object",
+    "properties": {
+        "cashflowData": {"$ref": "#/$defs/CashflowData"}
+    },
+    "$defs": {
+        "CashflowData": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "sourcePlatform":{
+                    "description": "The name of the source platform from which the Trade associated with the CashFlowData has originated. This is the sourcePlatform.name in the TradeStore",
+                    "type": "string"
+                },
+                "tradeId": {
+                    "description": "Source Platform Trade Id to which the cashflow is applicable",
+                    "type": "string"
+                },
+                "osttraVersion":{
+                    "description": "Specific version of the Trade, as known by Jigsaw, so that lineage to the specfic economic representation of the Trade can be traced, at the point at which the CashFlowData was generated",
+                    "type": "number"
+                },
+                "productType":{
+                    "description": "ProductType of the source trade associated with the CashFlowData",
+                    "type": "string"
+                },
+                "cashflowDataId":{
+                    "description": "Unique Identifier for the cashflowData, as assigned by the cashflow function. Every time a new valuation is triggered on TriCalc, then this Id must be assigned",
+                    "type": "string"
+                },
+                "cashflowValuationTimeStamp":{
+                    "description": "The timestamp when the cashflow calculations were returend by TriCalc",
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "paymentPartyId":{
+                    "description": "The PartyId of the Party to whom the paymentPartyDirection is applicable to in the cashflow calculations",
+                    "type": "string"
+                },
+                "cashflow": {
+                    "description": "The set of cashflows calculations",
+                    "type": "array",
+                    "items": {"$ref": "#/$defs/Cashflow"},
+                    "minItems": 1
+                },
+                "partyDetail": {
+                    "description": "A repeatable array of PartyDetail structures, min occurs=1",
+                    "type": "array",
+                    "items": {"$ref": "./OsttraShared.json#/$defs/PartyDetail"},
+                    "minItems": 1
+                }
+            }
+        },
+        "Cashflow": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "cashflowType":{
+                    "description": "Cashflow type - Float, Fixed, Principal",
+                    "type": "string"
+                },
+                "floatingRatePaymentType":{
+                    "description": "Will be set to Projected if the floating rate cashflow is a projected payment, or Fixed if the floating rate cashflow is a fixed payment",
+                    "type": "string"
+                },
+                "estimatedFixings":{
+                    "description": "Will be set to 'Yes' when market data does not contain all exact fixings to value floating rate cashflow, and 'No' when market data does contain all exact fixings to value a floating rate cashflow",
+                    "type": "string"  
+                },
+                "paymentDate":{
+                    "description": "The payment date of the cashflow`",
+                    "type": "string",
+                    "format": "date"
+                },
+                "paymentAmount": {
+                    "description": "The payment amount for the cashflow",
+                    "type": "number"
+                },
+                "paymentCurrency": {
+                    "description": "The payment currency for the cashflow",
+                    "type": "string"
+                },
+                "paymentScale":{
+                    "description": "The TriCalc scale to be applied to the payment amount for the cashflow",
+                    "type": "number"
+                },
+                "paymentPartyDirection" : {
+                    "description": "The cashflow payment direction associated with the Party to the Cashflow - either Pay or Receive. The counterparties action is implicitly the opposite to the parties",
+                    "type": "string"
+                },
+                "startDate":{
+                    "description": "The state date of the cashflow window",
+                    "type": "string",
+                    "format": "date"
+                },
+                "endDate":{
+                    "description": "The end date of the cashflow window",
+                    "type": "string",
+                    "format": "date"
+                },
+                "noOfDays" : {
+                    "description": "The number of days of the cashflow window",
+                    "type": "number"
+                },
+                "rollConvention":{
+                    "description": "The roll convention for how to roll dates in a periodic schedule"
+                },
+                "rollPeriodFrequency":{
+                    "description" : "The frequency at which calculation period end dates occurs with the regular part of the calculation period schedule.  Reflects time period (e.g. a day, week, month, year or term of the stream) and time period multiplier (e.g. 1, 2 or 3 etc.). For example 1D, 1W, 1M)"
+                },
+                "presentValueAmount": {
+                    "description": "The present value amount for the cashflow",
+                    "type": "number"
+                },
+                "presentValueCurrency": {
+                    "description": "The present value currency for the cashflow",
+                    "type": "string"
+                },
+                "notionalAmount":{
+                    "description": "The notional amount",
+                    "type": "number"
+                },
+                "notionalCurrency": {
+                    "description": "The notional currency",
+                    "type": "string"
+                },
+                "notionalScale":{
+                    "description": "The TriCalc scale to applied to the notional amount for the cashflow",
+                    "type": "number"
+                },
+                "dayCountConvention":{
+                    "description": "The day count convention",
+                    "type": "string"
+                },
+                "dayCountFraction":{
+                    "description": "The day count fraction",
+                    "type": "number"
+                },
+                "businessDayConvention": {
+                    "description": "The convention for adjusting a date if it would otherwise fall on a day that is not a business day",
+                    "type": "string"
+                },
+                "businessCenters": {
+                    "description": "The set of business centers is used to determine whether a particular day is a business day or not",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "floatingRateIndex": {
+                    "description": "The floating rate index for floating rate calculations",
+                    "type": "string"
+                },
+                "rate": {
+                    "description": "The rate associated with the cashflow. Can be fixed or projected",
+                    "type": "number"
+                },
+                "fixingDate":{
+                    "description": "The fixing Date for a specific fixing associated with a cashflow",
+                    "type": "string",
+                    "format": "date"
+                },
+                "spread": {
+                    "description": "The spread associated with the cashflow",
+                    "type": "number"
+                },
+                "discountFactor": {
+                    "description": "The discount factor associated with the cashflow",
+                    "type": "number"
+                },
+                "discountCurve": {
+                    "description": "The discount curve associated with the cashflow",
+                    "type": "string"
+                }
+            }
+       }
+    }
+}

@@ -1,0 +1,509 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "file:./OsttraFX.json",
+    "title": "Osttra FX schema",
+    "description": "Version 15.0 last updated 2025-08-20",
+    "type": "object",
+    "properties": {
+        "fx": {"$ref": "#/$defs/Fx"}
+    },
+    "$defs": {
+        "Fx": {
+            "type": "object",
+            "required": [
+                "tradeDate",
+                "productType"
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "tradeDate": {
+                    "description": "The Trade Date",
+                    "type": "string",
+                    "format": "date"
+                },
+                "productType": {
+                    "description": "Supported Products (implicit by Asset class), bound by enum type",
+                    "$ref": "#/$defs/FxProductTypeEnum"
+                },
+                "confirmationTimeStamp": {
+                    "description": "The timestamp reflecting when the trade or subsequent post trade event was confirmed by the source platform",
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "transactionType": {
+                    "description": "The current confirmed transaction type affecting the trade position",
+                    "type": "string"
+                },
+                "uniqueProductId": {
+                    "description": "The role of the Unique Product Identifier (UPI, ISO 4914)  is to uniquely identify the product involved in an OTC derivatives transaction that an authority requires, or may require in the future, to be reported to a Trade Repository (TR). ",
+                    "type": "string"
+                },
+                "activeStatus": {
+                    "description": "SourcePlatform determination of whether the trade/position is active or inactive",
+                    "type": "string"
+                },
+                "inactiveReason": {
+                    "description": "SourcePlatform reason for why a trade/position was made inactive",
+                    "type": "string"
+                },
+                "fxCash": {
+                    "description": "Fx cash products",
+                    "$ref": "#/$defs/FxCash"
+                },
+                "fxOption": {
+                    "description": "Fx option products",
+                    "$ref": "#/$defs/FxOption"
+                },
+                "postTradeEventDetail": {
+                    "description": "",
+                    "$ref": "#/$defs/PostTradeEventDetail"
+                }
+            },
+            "oneOf": [
+                {
+                    "required": ["fxCash"]
+                },
+                {
+                    "required": ["fxOption"]
+                }
+            ]
+        },
+        "FxOption": {
+            "type": "object",
+            "properties": {
+                "optionType": {
+                    "description": "Whether the option was a Put or a Call. The Option Seller will sell a PUT or sell a CALL, and the option Buyer will buy a PUT or Buy a CALL",
+                    "$ref": "./OsttraShared.json#/$defs/OptionTypeEnum"
+                },
+                "optionCurrencyPair": {
+                    "description": "The currency pair - base ccy first, reference ccy second",
+                    "type": "string"
+                },
+                "optionBaseCurrency": {
+                    "description": "The Base Currency (first) in currency pair",
+                    "type": "string"
+                },
+                "optionReferenceCurrency": {
+                    "description": "The Reference Currency (second) in currency pair",
+                    "type": "string"
+                },
+                "optionValueDate": {
+                    "description": "The value date for the two currencies, sometimes known as settlement date",
+                    "type": "string",
+                    "format": "date"
+                },
+                "optionBuyer": {
+                    "description": "The party that is buying the option. The Option buyer always receives the call currency and pays the put currency",
+                    "type": "string"
+                },
+                "optionSeller": {
+                    "description": "The party that is selling the option. The Option seller always receives the put currency and pays the call currency",
+                    "type": "string"
+                },
+                "putCurrency": {
+                    "description": "The put currency",
+                    "type": "string"
+                },
+                "callCurrency": {
+                    "description": "The call currency",
+                    "type": "string"
+                },
+                "putCurrencyAmount": {
+                    "description": "The put currency amount",
+                    "type": "number"
+                },
+                "callCurrencyAmount": {
+                    "description": "The call currency amount",
+                    "type": "number"
+                },
+                "strikePrice": {
+                    "description": "The strike rate applicable to the currency Pair",
+                    "type": "number"
+                },
+                "strikeQuoteBasis": {
+                    "description": "The method by which the strike rate is quoted. Either PutCcyPerRefCcy or RefCcyPerPutCcy",
+                    "$ref": "#/$defs/StrikeQuoteBasisEnum"
+                },
+                "spotRate": {
+                    "description": "The spot rate applicable to the currency Pair",
+                    "type": "number"
+                },
+                "optionForwardPoints": {
+                    "description": "Option forward points",
+                    "type": "number"
+                },
+                "delta": {
+                    "description": "Option delta",
+                    "type": "number"
+                },
+                "volatility": {
+                    "description": "Option volatility",
+                    "type": "number"
+                },
+                "commencementDate": {
+                    "description": "The earliest date on which the option can be exercised. Applicable to American exercised options",
+                    "type": "string",
+                    "format": "date"
+                },
+                "expirationDate": {
+                    "description": "The latest date on which the option can be exercised.",
+                    "type": "string",
+                    "format": "date"
+                },
+                "expirationTime": {
+                    "description": "Time at which the option expires on the expiry date, at the specified business center. This component represents the formal definition of option expiry time",
+                    "type": "string"
+                },
+                "expirationTimeBusinessCenter": {
+                    "description": "The business center associated with expirationTime",
+                    "type": "string"
+                },
+                "exerciseStyle": {
+                    "description": "Exercise Style of Option, one of American or European",
+                    "$ref": "./OsttraShared.json#/$defs/ExerciseStyleEnum"
+                },
+                "automaticExercise": {
+                    "description": "Automatic Exercise indicator of the Option, one of Applicable or Inapplicable",
+                    "$ref": "./OsttraShared.json#/$defs/AutomaticExerciseEnum"
+                },
+                "premium": {
+                    "description": "Automatic Exercise indicator of the Option, one of Applicable or Inapplicable",
+                    "$ref": "#/$defs/FxPremiumDetail"
+                },
+                "cashSettlement": {
+                    "description": "Specifies the currency and fixing details for an option's cash settlement that is settled in a single currency cash payment",
+                    "$ref": "#/$defs/CashSettlementDetail"
+                }
+            }
+        },
+        "FxCash": {
+            "type": "object",
+            "required": [
+                "currencyPair",
+                "baseCurrency",
+                "referenceCurrency",
+                "nearLeg"
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "currencyPair": {
+                    "description": "The currency pair - base ccy first, reference ccy second",
+                    "type": "string"
+                },
+                "baseCurrency": {
+                    "description": "The Base Currency (first) in currency pair",
+                    "type": "string"
+                },
+                "referenceCurrency": {
+                    "description": "The Reference Currency (second) in currency pair",
+                    "type": "string"
+                },
+                "nearLeg": {
+                    "description": "Mandatory near leg used for all FxSpot, FxForward, FxNDF single leg productTypes, and also for the near leg of FxSwap and FxNDSwap productTypes",
+                    "$ref": "#/$defs/FxCashEconomicDetail"
+                },
+                "farLeg": {
+                    "description": "Conditional far leg to be populated when representing the far leg of FxSwap and FxNDSwap productTypes",
+                    "$ref": "#/$defs/FxCashEconomicDetail"
+                }
+            }
+        },
+        "FxCashEconomicDetail": {
+            "type": "object",
+            "required": [
+                "baseCurrencyAmount",
+                "referenceCurrencyAmount",
+                "rate",
+                "quoteBasis",
+                "valueDate",
+                "partyDirection"
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "baseCurrencyAmount": {
+                    "description": "The Base Currency amount as per Base Currency(First) in currency pair",
+                    "type": "number"
+                },
+                "referenceCurrencyAmount": {
+                    "description": "The Reference Currency amount as per Reference Currency(Second) in currency pair",
+                    "type": "number"
+                },
+                "baseCurrencyBuyer": {
+                    "description": "The Base Currency Buyer - corresponds to referenceId for specific Interested Party",
+                    "type": "string"
+                },
+                "baseCurrencySeller": {
+                    "description": "The Base Currency Seller - corresponds to referenceId for specific Interested Party",
+                    "type": "string"
+                },
+                "rate": {
+                    "description": "The rate applicable to the currency Pair",
+                    "type": "number"
+                },
+                "spotRate": {
+                    "description": "The spot rate applicable to the currency Pair",
+                    "type": "number"
+                },
+                "forwardPoints": {
+                    "description": "The forward points applicable to the currency Pair. Can we adjusted (with a pip factor) or non adjusted. When non adjusted, rate-spotRate=forwardPoints. Can be negative",
+                    "type": "number"
+                },
+                "tenorPeriod": {
+                    "description": "A tenor expressed as a period type and multiplier (e.g. 1D, 1Y, etc.)",
+                    "type": "string"
+                },
+                "quoteBasis": {
+                    "description": "Either RefCcyPerBaseCcy or BaseCcyPerRefCcy applicable to the quoteing of the rate for the currency Pair",
+                    "$ref": "#/$defs/QuoteBasisEnum"
+                },
+                "dealtCurrency": {
+                    "description": "3 char Currency code from the currency pair, for the traded ccy",
+                    "type": "string"
+                },
+                "valueDate": {
+                    "description": "The value date for the two currencies, sometimes known as settlement date",
+                    "type": "string",
+                    "format": "date"
+                },
+                "partyDirection": {
+                    "description": "The dealt action associated with the Party to the Trade - either Buy or Sell. The counterparties action is implicitly the opposite to the parties",
+                    "$ref": "#/$defs/FxPartyDirectionEnum"
+                },
+                "marketConvention": {
+                    "description": "Whether the currency pair is in market or reciprocal/inverted convention.  True (i.e. complies with the market convention) or False (i.e. is the reciprocal of the market convention)",
+                    "type": "boolean"
+                },
+                "nonDeliverableSettlement": {
+                    "description": "Specifies the currency and fixing details for cash settlement as a single currency cash payment",
+                    "$ref": "#/$defs/CashSettlementDetail"
+                }
+            }
+        },
+        "CashSettlementDetail": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "cashSettlementCurrency": {
+                    "description": "The cash settlement currency",
+                    "type": "string"
+                },
+                "fixings": {
+                    "description": "Specifies the source for and timing of a fixing of an exchange rate",
+                    "type": "array",
+                    "items": {"$ref": "#/$defs/FxFixingDetail"},
+                    "minItems": 1
+                }
+            }
+        },
+        "FxFixingDetail": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "fixingDate": {
+                    "description": "The specific date when a non-deliverable forward or cash-settled option will fix against a particular rate, which will be used to compute the ultimate cash settlement",
+                    "type": "string",
+                    "format": "date"
+                },
+                "fixingRateSource": {
+                    "description": "The primary source for where the rate observation will occur. Will typically be either a page or a reference bank published rate",
+                    "type": "string"
+                },
+                "fixingTime": {
+                    "description": "The time at which the spot currency exchange rate will be observed for a fixing. Specified in hh:mm:ss format where the second component must be '00'",
+                    "type": "string"
+                },
+                "fixingBusinessCenter": {
+                    "description": "The business day calendar location at which the spot currency exchange rate will be observed for a fixing",
+                    "type": "string"
+                },
+                "fixingDateConvention": {
+                    "description": "The business day convention used for adjusting the fixing date if it would otherwise fall on a day that is not a business date in the specified business centers.",
+                    "type": "string"
+                },
+                "settlmentRateOption": {
+                    "description": "The officially defined rate settlement rate option will be the used for the fixing",
+                    "type": "string"
+                }
+            }
+        },
+        "FxPremiumDetail": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "premiumPayer": {
+                    "description": "The party responsible for paying the premium payment",
+                    "type": "string"
+                },
+                "premiumReceiver": {
+                    "description": "The party responsible for receiving the premium payment",
+                    "type": "string"
+                },
+                "premiumPaymentAmount": {
+                    "description": "The premium payment amount",
+                    "type": "number"
+                },
+                "premiumPaymentCurrency": {
+                    "description": "The premium payment currency",
+                    "type": "string"
+                },
+                "unadjustedPremiumPaymentDate": {
+                    "description": "The payment date. This date is subject to adjustment in accordance with any applicable business day convention.",
+                    "type": "string",
+                    "format": "date"
+                },
+                "premiumPaymentDateBusinessDayConvention": {
+                    "description": "The business day convention used for adjusting the date if it would otherwise fall on a day that is not a business date in the specified business centers.",
+                    "type": "string"
+                },
+                "premiumPaymentDateBusinessCenters": {
+                    "description": "The business centers used for adjusting the date if it would otherwise fall on a day that is not a business date in the specified business centers.",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "premiumQuoteValue": {
+                    "description": "A decimal figure indicating the price of the option, either as a percentage of notional, or in points",
+                    "type": "number"
+                },
+                "premiumQuoteBasis": {
+                    "description": "The premium quote basis",
+                    "$ref": "#/$defs/PremiumQuoteBasisEnum"
+                }
+            }
+        },
+        "PostTradeEventDetail": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "pteTransactionDate": {
+                    "description": "The transaction date for the post trade event (PTE)",
+                    "type": "string",
+                    "format": "date"
+                },
+                "pteEffectiveDate": {
+                    "description": "The effective date for the post trade event. Will be on or after the pteTransactionDate",
+                    "type": "string",
+                    "format": "date"
+                },
+                "pteBaseCurrency": {
+                    "description": "The base currency for the PTE. Only applicable to PTEs on Fx Cash trades",
+                    "type": "string"
+                },
+                "pteReferenceCurrency": {
+                    "description": "The reference currency for the PTE. Only applicable to PTEs on Fx Cash traes",
+                    "type": "string"
+                },
+                "pteAffectedBaseAmount": {
+                    "description": "The affected base amount for the PTE. Only applicable to PTEs on Fx cash trades. (What notional is changing)",
+                    "type": "number"
+                },
+                "pteOutstandingBaseAmount": {
+                    "description": "The outstanding base amount for the PTE.  Only applicable to PTEs on Fx cash trades. (What notional is left)",
+                    "type": "number"
+                },
+                "pteAffectedReferenceAmount": {
+                    "description": "The affected reference amount for the PTE. Only applicable to PTEs on Fx cash trades. (What notional is changing)",
+                    "type": "number"
+                },
+                "pteOutstandingReferenceCallAmount": {
+                    "description": "The outstanding reference amount for the PTE.  on Fx cash trades. (What notional is left)",
+                    "type": "number"
+                },
+                "ptePutCurrency": {
+                    "description": "The put currency for the PTE. Only applicable to PTEs on FXOs",
+                    "type": "string"
+                },
+                "pteCallCurrency": {
+                    "description": "The call currency for the PTE. Only applicable to PTEs on FXOs",
+                    "type": "string"
+                },
+                "pteAffectedPutAmount": {
+                    "description": "The affected put amount for the PTE. Only applicable to PTEs on FXOs. (What notional is changing)",
+                    "type": "number"
+                },
+                "pteOutstandingPutAmount": {
+                    "description": "The outstanding put amount for the PTE.  Only applicable to PTEs on FXOs. (What notional is left)",
+                    "type": "number"
+                },
+                "pteAffectedCallAmount": {
+                    "description": "The affected call amount for the PTE. Only applicable to PTEs on FXOs (What notional is changing)",
+                    "type": "number"
+                },
+                "pteOutstandingCallAmount": {
+                    "description": "The outstanding call amount for the PTE.  Only applicable to PTEs on FXOs. (What notional is left)",
+                    "type": "number"
+                },
+                "exerciseEventType": {
+                    "description": "The settlement style for the exercise, one of Cash or Physical",
+                    "type": "string"
+                },
+                "ptePaymentCurrency": {
+                    "type": "string",
+                    "description": "Currency in which post trade event payment to be done."
+                },
+                "ptePaymentDate": {
+                    "type": "string",
+                    "format": "Date",
+                    "description": "Date on which payment, driven from pte Event, is to be done. "
+                },
+                "ptePaymentPayer": {
+                    "type": "string",
+                    "description": "Payer of payment obligation created by post trade event "
+                },
+                "ptePaymentReceiver": {
+                    "type": "string",
+                    "description": "Receiver of Payment obligation created by post trade event"
+                },
+                "partialExerciseCcy": {
+                    "type": "string",
+                    "description": "Currency for which partial exercise of option is being done"
+                },
+                "partialExerciseAmount": {
+                    "type": "number",
+                    "description": "Partial exercise amount of an option"
+                }
+            }
+        },
+        "QuoteBasisEnum": {
+            "type": "string",
+            "enum": [
+                "BaseCcyPerRefCcy",
+                "RefCcyPerBaseCcy"
+            ]
+        },
+        "StrikeQuoteBasisEnum": {
+            "type": "string",
+            "enum": [
+                "PutCcyPerCallCcy",
+                "CallCcyPerPutCcy"
+            ]
+        },
+        "PremiumQuoteBasisEnum": {
+            "type": "string",
+            "enum": [
+                "PercentageOfPutCurrency",
+                "PercentageOfCallCurrency",
+                "PutCurrencyPerCallCurrency",
+                "CallCurrencyPerPutCurrency"
+            ]
+        },
+        "FxPartyDirectionEnum": {
+            "type": "string",
+            "enum": [
+                "Buy",
+                "Sell"
+            ]
+        },
+        "FxProductTypeEnum": {
+            "type": "string",
+            "enum": [
+                "FxSpot",
+                "FxForward",
+                "FxNDF",
+                "FxSwap",
+                "FxNDSwap",
+                "FxOption",
+                "FxNDOption"
+            ]
+        }
+    }
+}

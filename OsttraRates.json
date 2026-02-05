@@ -1,0 +1,1754 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "file:./OsttraRates.json",
+    "title": "Osttra Rates schema",
+    "description": "Version 15.0 last updated 2025-08-20",
+    "type": "object",
+    "properties": {
+        "rates": {"$ref": "#/$defs/Rates"}
+    },
+    "$defs": {
+        "Rates": {
+            "type": "object",
+            "required": [
+                "tradeDate",
+                "productType"
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "tradeDate": {
+                    "description": "The Trade Date",
+                    "type": "string",
+                    "format": "date"
+                },
+                "productType": {
+                    "description": "Supported Products (implicit by Asset class), bound by enum type",
+                    "$ref": "#/$defs/RatesProductTypeEnum"
+                },
+                "productTaxonomy": {
+                    "description": "ISDA Product Taxonomy",
+                    "type": "string"
+                },
+                "uniqueProductId": {
+                    "description": "The role of the Unique Product Identifier (UPI, ISO 4914)  is to uniquely identify the product involved in an OTC derivatives transaction that an authority requires, or may require in the future, to be reported to a Trade Repository (TR). ",
+                    "type": "string"
+                },
+                "underlyingSwapProductId": {
+                    "description": "The Unique Product Identifier (UPI, ISO4914) for the underlyingSwap",
+                    "type": "string"
+                },
+                "productClassificationId": {
+                    "description": "The Classification of Financial Instruments (CFI, ISO 10962), is a six-letter-code used to classify and describe the structure and function of a financial instrument (in the form of security or contract) as part of the instrument reference data",
+                    "type": "string"
+                },
+                "isin": {
+                    "description": "An International Securities Identification Number (ISIN) is a 12-digit alphanumeric code that uniquely identifies a specific security",
+                    "type": "string"
+                },
+                "mic": {
+                    "description": "A market identifier code (MIC) is a four-character number used to identify stock markets and other exchanges for use in global trading and referencing computer systems.",
+                    "type": "string"
+                },
+                "templateName": {
+                    "description": "The MW template name used when capturing a trade via the MW UI",
+                    "type": "string"
+                },
+                "calculationAgent": {
+                    "description": "A field to capture the calculation agent party details.\nUsed for CMS Spread, CMS One Look and Rate Lock",
+                    "type": "string"
+                },
+                "swaption": {
+                    "description": "The swaption details",
+                    "$ref": "#/$defs/Swaption"
+                },
+                "swap": {
+                    "description": "The swap details",
+                    "$ref": "#/$defs/Swap"
+                },
+                "eventDetail": {
+                    "description": "",
+                    "$ref": "#/$defs/EventDetail"
+                },
+                "collateral": {
+                    "description": "",
+                    "$ref": "#/$defs/IndependantAmount"
+                },
+                "documentationDetail": {
+                    "description": "DocumenationDetail structure used to model documentation",
+                    "$ref": "#/$defs/RatesDocumentationDetail"
+                },
+                "settlementDetail": {
+                    "description": "RatesSettlementDetail structure used to model documentation",
+                    "$ref": "#/$defs/RatesSettlementDetail"
+                }
+            }
+        },
+        "Stream": {
+            "type": "object",
+            "required": ["legType"],
+            "additionalProperties": false,
+            "properties": {
+                "legType": {
+                    "description": "One of either Fixed, Floating or FRA, used to specify the type of economic properties the swap stream represents",
+                    "$ref": "#/$defs/LegTypeEnum"
+                },
+                "payer": {
+                    "description": "A reference to the party responsible for making the payments defined by this structure",
+                    "type": "string"
+                },
+                "receiver": {
+                    "description": "A reference to the party that receives the payments corresponding to this structure",
+                    "type": "string"
+                },
+                "buyer": {
+                    "description": "A reference to the party buying the FRA",
+                    "type": "string"
+                },
+                "seller": {
+                    "description": "A reference to the party selling the FRA",
+                    "type": "string"
+                },
+                "calculationPeriodDates": {
+                    "description": "The calculation periods dates schedule",
+                    "$ref": "./OsttraShared.json#/$defs/CalculationPeriodDates"
+                },
+                "paymentDates": {
+                    "description": "",
+                    "$ref": "./OsttraShared.json#/$defs/PaymentDates"
+                },
+                "resetDates": {
+                    "description": "",
+                    "$ref": "#/$defs/ResetDates"
+                },
+                "calculationPeriodAmount": {
+                    "description": "",
+                    "$ref": "#/$defs/CalculationPeriodAmount"
+                },
+                "stubCalculationPeriodAmount": {
+                    "description": "",
+                    "$ref": "#/$defs/StubCalculationPeriodAmount"
+                },
+                "principleExchanges": {
+                    "description": "",
+                    "$ref": "#/$defs/PrincipleExchanges"
+                },
+                "settlementProvision": {
+                    "description": "",
+                    "$ref": "#/$defs/SettlementProvision"
+                },
+                "cashFlows": {
+                    "description": "",
+                    "$ref": "#/$defs/CashFlows"
+                }
+            }
+        },
+        "Swaption": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "buyer": {
+                    "description": "The party that is buying the swaption",
+                    "type": "string"
+                },
+                "seller": {
+                    "description": "The party that is selling the swaption",
+                    "type": "string"
+                },
+                "premium": {
+                    "description": "",
+                    "$ref": "#/$defs/Premium"
+                },
+                "exercise": {
+                    "description": "",
+                    "$ref": "#/$defs/Exercise"
+                },
+                "calculationAgent": {
+                    "description": "The ISDA calculation agent responsible for performing duties as defined in the applicable product definitions. For example, the Calculation Agent may be defined as being the Non-exercising Party.",
+                    "type": "string"
+                },
+                "cashSettlement": {
+                    "description": "",
+                    "$ref": "#/$defs/CashSettlement"
+                },
+                "physicalSettlementAgreedDiscountRate": {
+                    "description": "This may be used to indicate the discount rate to be used for cash collateral for cash settlement purposes",
+                    "type": "string"
+                },
+                "clearedPhysicalSettlement": {
+                    "description": "Specifies whether the swap resulting from physical settlement of the swaption transaction will clear through a clearing house. The meaning of Cleared Physical Settlement is defined in the 2006 ISDA Definitions, Section 15.2 (published in Supplement number 28)",
+                    "type": "boolean"
+                },
+                "swaptionStraddle": {
+                    "description": "Whether the option is a swaption or a swaption straddle.",
+                    "type": "boolean"
+                },
+                "swap": {
+                    "description": "Swap structure that is the underlyer to the swaption",
+                    "$ref": "#/$defs/Swap"
+                }
+            }
+        },
+        "Swap": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "stream": {
+                    "description": "Stream used for floating leg, fixed leg, fra, capfloor rates economicDetails",
+                    "type": "array",
+                    "items": {"$ref": "#/$defs/Stream"}
+                },
+                "premium": {
+                    "description": "",
+                    "$ref": "#/$defs/Premium"
+                },
+                "earlyTerminationProvision": {
+                    "description": "",
+                    "$ref": "#/$defs/EarlyTerminationProvision"
+                },
+                "cancelableProvision": {
+                    "description": "",
+                    "$ref": "#/$defs/CancelableProvision"
+                },
+                "additionalTerms": {
+                    "description": "",
+                    "$ref": "#/$defs/AdditionalTerms"
+                },
+                "additionalPayments": {
+                    "description": "",
+                    "type": "array",
+                    "items": {"$ref": "#/$defs/AdditionalPayment"}
+                }
+            }
+        },
+        "ResetDates": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "resetRelativeTo": {
+                    "description": "Specifies whether the reset dates are determined with respect to each adjusted calculation period start date or adjusted calculation period end date. If the reset frequency is specified as daily this element must not be included",
+                    "type": "string"
+                },
+                "initialFixingDatePeriod": {
+                    "description": "Specifies  time period and multiplier (e.g. 0,-1, -2 etc.) for the initial fixing date",
+                    "type": "string"
+                },
+                "initialFixingDateDayType": {
+                    "description": "In the case of an offset specified as a number of days, this element defines whether consideration is given as to whether a day is a good business day or not. If a day type of business days is specified then non-business days are ignored when calculating the offset. The financial business centers to use for determination of business days are implied by the context in which this element is used. This element must only be included when the offset is specified as a number of days. If the offset is zero days then the dayType element should not be included",
+                    "type": "string"
+                },
+                "initialFixingDateBusinessDayConvention": {
+                    "description": "The convention for adjusting a date if it would otherwise fall on a day that is not a business day.",
+                    "type": "string"
+                },
+                "initialFixingDateBusinessCenters": {
+                    "description": "The set of business centers is used to determine whether a particular day is a business day or not",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "unadjustedFixingDate": {
+                    "description": "Fixing date applicable to CMS One Look only, however fixingBusinessDayConvention and fixingBusinessCenters below to be leveraged for data adjustments",
+                    "type": "string",
+                    "format": "date"
+                },
+                "fixingDatePeriod": {
+                    "description": "Specifies the fixing date relative to the reset date in terms of a business days offset and an associated set of financial business centers. Normally these offset calculation rules will be those specified in the ISDA definition for the relevant floating rate index (ISDA's Floating Rate Option). However, non-standard offset calculation rules may apply for a trade if mutually agreed by the principal parties to the transaction.  Reflects time period and multiplier (e.g. 0,-1, -2 etc.)",
+                    "type": "string"
+                },
+                "fixingDayType": {
+                    "description": "In the case of an offset specified as a number of days, this element defines whether consideration is given as to whether a day is a good business day or not. If a day type of business days is specified then non-business days are ignored when calculating the offset. The financial business centers to use for determination of business days are implied by the context in which this element is used. This element must only be included when the offset is specified as a number of days. If the offset is zero days then the dayType element should not be included.",
+                    "type": "string"
+                },
+                "fixingBusinessDayConvention": {
+                    "description": "The convention for adjusting a date if it would otherwise fall on a day that is not a business day.",
+                    "type": "string"
+                },
+                "fixingBusinessCenters": {
+                    "description": "The set of business centers is used to determine whether a particular day is a business day or not",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "resetRateCutOffDaysOffsetPeriod": {
+                    "description": "Specifies the number of business days before the period end date when the rate cut-off date is assumed to apply. The financial business centers associated with determining the rate cut-off date are those specified in the reset dates adjustments. The rate cut-off number of days must be a negative integer (a value of zero would imply no rate cut off applies in which case the rateCutOffDaysOffset element should not be included). The relevant rate for each reset date in the period from, and including, a rate cut-off date to, but excluding, the next applicable period end date (or, in the case of the last calculation period, the termination date) will (solely for purposes of calculating the floating amount payable on the next applicable payment date) be deemed to be the relevant rate in effect on that rate cut-off date. For example, if rate cut-off days for a daily averaging deal is -2 business days, then the refix rate applied on (period end date - 2 days) will also be applied as the reset on (period end date - 1 day), i.e. the actual number of reset dates remains the same but from the rate cut-off date until the period end date, the same refix rate is applied. Note that in the case of several calculation periods contributing to a single payment, the rate cut-off is assumed only to apply to the final calculation period contributing to that payment.",
+                    "type": "string"
+                },
+                "resetRateCutOffDaysOffsetDayType": {
+                    "description": "The day type associated with the offset must imply a business days offset",
+                    "type": "string"
+                },
+                "resetFrequencyPeriod": {
+                    "description": "The frequency at which reset dates occur. In the case of a weekly reset frequency, also specifies the day of the week that the reset occurs. If the reset frequency is greater than the calculation period frequency then this implies that more than one reset date is established for each calculation period and some form of rate averaging is applicable. Reflects time period (e.g. a day, week, month, year or term of the stream and multiplier (e.g. 1, 2 or 3 etc.). For example 1W",
+                    "type": "string"
+                },
+                "resetFrequencyWeeklyRollConvention": {
+                    "description": "The day of the week on which a weekly reset date occurs. This element must be included if the reset frequency is defined as weekly and not otherwise",
+                    "type": "string"
+                },
+                "resetDateBusinessDayConvention": {
+                    "description": "The business day convention to apply to each reset date if it would otherwise fall on a day that is not a business day in the specified financial business centers",
+                    "type": "string"
+                },
+                "resetDateBusinessCenters": {
+                    "description": "The set of business centers is used to determine whether a particular day is a business day or no",
+                    "type": "array",
+                    "items": {"type": "string"}
+                }
+            }
+        },
+        "CalculationPeriodAmount": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "notionalStepScheduleInitialValue": {
+                    "description": "The notional amount or notional amount schedule expressed as explicit outstanding notional amounts and dates. The non-negative initial rate or amount, as the case may be. In the case of a schedule, the step dates may be subject to adjustment in accordance with any adjustments specified in calculationPeriodDatesAdjustments",
+                    "type": "number"
+                },
+                "notionalStepScheduleCurrency": {
+                    "description": "The currency in which the notional amount is denominated.",
+                    "type": "string"
+                },
+                "notionalStepSchedule": {
+                    "description": "",
+                    "type": "array",
+                    "items": {"$ref": "#/$defs/Step"}
+                },
+                "fxLinkedNotionalScheduleInitialValue": {
+                    "description": "The initial currency amount for the varying notional. This may be omitted for a forward starting swap if the Fx-linked notional value is not known at deal inception",
+                    "type": "number"
+                },
+                "fxLinkedNotionalScheduleVaryingNotionalCurrency": {
+                    "description": "The currency of the varying notional amount, i.e. the notional amount being determined periodically based on observation of a spot currency exchange rate",
+                    "type": "string"
+                },
+                "fxLinkedNotionalScheduleVaryingNotionalFixingDatePeriod": {
+                    "description": "A time period, e.g. a day, week, month or year of the stream. If the periodMultiplier value is 0 (zero) then period must contain the value D (day).",
+                    "type": "string"
+                },
+                "fxLinkedNotionalScheduleVaryingNotionalFixingDateDayType": {
+                    "description": "In the case of an offset specified as a number of days, this element defines whether consideration is given as to whether a day is a good business day or not. If a day type of business days is specified then non-business days are ignored when calculating the offset. The financial business centers to use for determination of business days are implied by the context in which this element is used. This element must only be included when the offset is specified as a number of days. If the offset is zero days then the dayType element should not be included.",
+                    "type": "string"
+                },
+                "fxLinkedNotionalScheduleVaryingNotionalFixingDateBusinessDayConvention": {
+                    "description": "The convention for adjusting a date if it would otherwise fall on a day that is not a business day",
+                    "type": "string"
+                },
+                "fxLinkedNotionalScheduleVaryingNotionalFixingDateBusinessCenters": {
+                    "description": "The set of business centers is used to determine whether a particular day is a business day or not",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "fxLinkedNotionalScheduleVaryingNotionalFixingDateRelativeTo": {
+                    "description": "The related reference to the end date of the calculation period, where an unadjustedTerminationDate is not provided",
+                    "type": "string"
+                },
+                "fxLinkedNotionalScheduleSpotPrimaryRateSource": {
+                    "description": "The primary source and time for where the spot currency exchange rate observation will occur",
+                    "type": "string"
+                },
+                "fxLinkedNotionalScheduleSpotPrimaryRateSourcePage": {
+                    "description": "Either a page or a reference bank published rate",
+                    "type": "string"
+                },
+                "fxLinkedNotionalScheduleFixingTime": {
+                    "description": "The time at which the spot currency exchange rate will be observed. It is specified as a time in a business day calendar location, e.g. 11:00am London time",
+                    "type": "string"
+                },
+                "fxLinkedNotionalScheduleFixingTimeBusinessCenter": {
+                    "description": "",
+                    "type": "string"
+                },
+                "fxLinkedNotionalScheduleVaryingNotionalInterimExchangePeriod": {
+                    "description": "The dates on which interim exchanges of notional are paid. Interim exchanges will arise as a result of changes in the spot currency exchange amount or changes in the constant notional schedule (e.g. amortization).",
+                    "type": "string"
+                },
+                "fxLinkedNotionalScheduleVaryingNotionalInterimExchangeBusinessDayConvention": {
+                    "description": "In the case of an offset specified as a number of days, this element defines whether consideration is given as to whether a day is a good business day or not. If a day type of business days is specified then non-business days are ignored when calculating the offset. The financial business centers to use for determination of business days are implied by the context in which this element is used. This element must only be included when the offset is specified as a number of days. If the offset is zero days then the dayType element should not be included.",
+                    "type": "string"
+                },
+                "fixedRate": {
+                    "description": "The fixed rate or fixed rate schedule expressed as explicit fixed rates and dates. In the case of a schedule, the step dates may be subject to adjustment in accordance with any adjustments specified in calculationPeriodDatesAdjustments. The initial rate or amount, as the case may be. An initial rate of 5% would be represented as 0.05.",
+                    "type": "number"
+                },
+                "fixedRateStepSchedule": {
+                    "description": "",
+                    "type": "array",
+                    "items": {"$ref": "#/$defs/Step"}
+                },
+                "knownAmountInitialValue": {
+                    "description": "The known calculation period amount or a known amount schedule expressed as explicit known amounts and dates. In the case of a schedule, the step dates may be subject to adjustment in accordance with any adjustments specified in calculationPeriodDatesAdjustments",
+                    "type": "number"
+                },
+                "knownAmountCurrency": {
+                    "description": "The currency in which the known amount is denominated",
+                    "type": "string"
+                },
+                "knownAmountCalculationPeriodNumberOfDays": {
+                    "description": "The number of days from the adjusted calculation period start date to the adjusted value date, calculated in accordance with the applicable day count fraction",
+                    "type": "number"
+                },
+                "floatingRateIndex": {
+                    "description": "The floating rate index for floating rate calculations",
+                    "type": "string"
+                },
+                "floatingRateTenor": {
+                    "description": "The ISDA Designated Maturity, i.e. the tenor of the floating rate",
+                    "type": "string"
+                },
+                "floatingRateCalculationParametersCalculationMethod": {
+                    "description": "Parameters to specify a rate calculated using an averaging or compounding formula, as described in the 2021 ISDA Defintions, section 7. Please note that when this structure is used, the \"resetDates\" structure will not be used. Instead, the observation rules for the calculated rate are defined within the structure",
+                    "type": "string"
+                },
+                "floatingRateCalculationParametersApplicableBusinessCenters": {
+                    "description": "Specifies the applicable business days to be used for this calculation. If omitted, the business days should be defaulted from the FRO Matrix, as represented in the FRO metadata. Failing that, it should be defaulted from the default business center for the relevant currency. See the ISDA 2021 Definitions Section 7.2.1.",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "floatingRateCalculationParametersLookbackOffsetDays": {
+                    "description": "Specifies that lookback calculation is in effect, and supplies parameters needed to support that. See the ISDA 2021 Definitions Section 7.3.2 and 7.4.2. This should not be used when the calculationMethod is CompoundedIndex",
+                    "type": "string"
+                },
+                "floatingRateCalculationParametersLockoutOffsetDays": {
+                    "description": "Specifies that lockout calculation is in effect, and supplies parameters needed to support that. See the ISDA 2021 Definitions Section 7.3.4 and 7.4.4. This should not be used when the calculationMethod is CompoundedIndex",
+                    "type": "string"
+                },
+                "floatingRateCalculationParametersObservationShiftOffsetDays": {
+                    "description": "The number of business days before the base date that the observations are to be shifted. If this element is omitted, the number of offset days will be as specified in the 2021 ISDA Definitions, which is typically 5.",
+                    "type": "string"
+                },
+                "floatingRateCalculationParametersObservationShiftPeriodDates": {
+                    "description": "Specifies how the observation period is to be determined relative to the basic calculation period. Options include \"standard\" (observation period aligns with the calculation period except for any shifts/lookbacks/lockouts, i.e. it is set in arrears), \"InAdvance\" (observation period is based on the prior or deemed prior calculation period plus any shifts), or \"FixingDate\" (observation period is based on a fixing date defined the the FpML resetDates structure; this is used only for fallback rate definitions that reference existing resetDates structures.)",
+                    "type": "string"
+                },
+                "floatingRateCalculationParametersObservationAdditionalBusinessDayCenters": {
+                    "description": "Any additional business centers that are applicable to the observation shift calculation, in addition to the regular \"applicableBusinessDays\".",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "floatingRateMultiplierScheduleInitialValue": {
+                    "description": "The initial rate or amount, as the case may be. An initial rate of 5% would be represented as 0.05",
+                    "type": "number"
+                },
+                "floatingRateSpreadScheduleInitialValue": {
+                    "description": "The initial rate or amount, as the case may be. An initial rate of 5% would be represented as 0.05",
+                    "type": "number"
+                },
+                "floatingRateSpreadStepSchedule": {
+                    "description": "",
+                    "type": "array",
+                    "items": {"$ref": "#/$defs/Step"}
+                },
+                "floatingRateCapRateInitialValue": {
+                    "description": "The cap rate or cap rate schedule, if any, which applies to the floating rate. The cap rate (strike) is only required where the floating rate on a swap stream is capped at a certain level. A cap rate schedule is expressed as explicit cap rates and dates and the step dates may be subject to adjustment in accordance with any adjustments specified in calculationPeriodDatesAdjustments. The cap rate is assumed to be exclusive of any spread and is a per annum rate, expressed as a decimal. A cap rate of 5% would be represented as 0.05",
+                    "type": "number"
+                },
+                "floatingRateCapRateStepSchedule": {
+                    "description": "",
+                    "type": "array",
+                    "items": {"$ref": "#/$defs/Step"}
+                },
+                "floatingRateCapRateBuyer": {
+                    "description": "The buyer of the option",
+                    "type": "string"
+                },
+                "floatingRateCapRateSeller": {
+                    "description": "The seller of the option",
+                    "type": "string"
+                },
+                "floatingRateFloorRateInitialValue": {
+                    "description": "The floor rate or floor rate schedule, if any, which applies to the floating rate. The floor rate (strike) is only required where the floating rate on a swap stream is floored at a certain strike level. A floor rate schedule is expressed as explicit floor rates and dates and the step dates may be subject to adjustment in accordance with any adjustments specified in calculationPeriodDatesAdjustments. The floor rate is assumed to be exclusive of any spread and is a per annum rate, expressed as a decimal. A floor rate of 5% would be represented as 0.05.",
+                    "type": "number"
+                },
+                "floatingRateFloorRateStepSchedule": {
+                    "description": "",
+                    "type": "array",
+                    "items": {"$ref": "#/$defs/Step"}
+                },
+                "floatingRateFloorRateBuyer": {
+                    "description": "The buyer of the option",
+                    "type": "string"
+                },
+                "floatingRateFloorRateSeller": {
+                    "description": "The seller of the option",
+                    "type": "string"
+                },
+                "initialFloatingRate": {
+                    "description": "The initial floating rate reset agreed between the principal parties involved in the trade. This is assumed to be the first required reset rate for the first regular calculation period. It should only be included when the rate is not equal to the rate published on the source implied by the floating rate index. An initial rate of 5% would be represented as 0.05.",
+                    "type": "string"
+                },
+                "floatingRateAveragingMethod": {
+                    "description": "If averaging is applicable, this component specifies whether a weighted or unweighted average method of calculation is to be used. The component must only be included when averaging applies.",
+                    "type": "string"
+                },
+                "floatingRateNegativeInterestRateTreatment": {
+                    "description": "The specification of any provisions for calculating payment obligations when a floating rate is negative (either due to a quoted negative floating rate or by operation of a spread that is subtracted from the floating rate)",
+                    "type": "string"
+                },
+                "dayCountFraction": {
+                    "description": "The day count fraction",
+                    "type": "string"
+                },
+                "inflationRatefloatingRateIndex": {
+                    "description": "",
+                    "type": "string"
+                },
+                "inflationRateInflationLagPeriod": {
+                    "description": "an offsetting period from the payment date which determines the reference period for which the inflation index is onserved. A time period multiplier, e.g. 1, 2 or 3 etc. A negative value can be used when specifying an offset relative to another date, e.g. -2 days",
+                    "type": "string"
+                },
+                "inflationRateIndexSource": {
+                    "description": "The reference source such as Reuters or Bloomberg.",
+                    "type": "string"
+                },
+                "inflationRateInterpolationMethod": {
+                    "description": "The method used when calculating the Inflation Index Level from multiple points - the most common is Linear.",
+                    "type": "string"
+                },
+                "inflationRateInitialIndexLevel": {
+                    "description": "Initial known index level for the first calculation period",
+                    "type": "string"
+                },
+                "inflationRateIndexInitialDate": {
+                    "description": "Initial Inflation rate observed, defined by month and year",
+                    "type": "string"
+                },
+                "inflationRateIndexFinalDate": {
+                    "description": "Final Inflation rate observed, defined by month and year",
+                    "type": "string"
+                },
+                "inflationRateFallbackBondApplicable": {
+                    "description": "The applicability of a fallback bond as defined in the 2006 ISDA Inflation Derivatives Definitions, sections 1.3 and 1.8.",
+                    "type": "boolean"
+                },
+                "inflationRateCalculationMethod": {
+                    "description": "Indicates how to use the inflation index to calculate the payment",
+                    "type": "string"
+                },
+                "inflationRateCalculationStyle": {
+                    "description": "Indicates the style of how the inflation index calculates the payment (e.g. YearOnYear, ZeroCoupon)",
+                    "type": "string"
+                },
+                "finalPrincipalExchangeCalculationFloored": {
+                    "description": "To be specified only for inflation products that embed a redemption payment, e.g. inflation linked asset swap",
+                    "type": "boolean"
+                },
+                "fraDiscounting": {
+                    "description": "Specifies whether discounting applies and, if so, what type.",
+                    "type": "string"
+                },
+                "compoundingMethod": {
+                    "description": "If more that one calculation period contributes to a single payment amount this element specifies whether compounding is applicable, and if so, what compounding method is to be used. This element must only be included when more that one calculation period contributes to a single payment amount.",
+                    "$ref": "#/$defs/CompoundingMethodEnum"
+                },
+                "baseIndexValue": {
+                    "description": "Specifies the Strike Rate of the Rate Lock Transaction agreed between the parties",
+                    "type": "string"
+                },
+                "dv01Currency": {
+                    "description": "Specifies the currency of the DV01 (Dollar Value of one basis point) Amount with respect to the Rate Lock Transaction.",
+                    "type": "string"
+                },
+                "dv01Amount": {
+                    "description": "Specifies the DV01 (Dollar Value of one basis point) Amount with respect to Rate Lock Transaction.",
+                    "type": "number"
+                }
+            }
+        },
+        "StubCalculationPeriodAmount": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "initialStub": {
+                    "description": "",
+                    "type": "array",
+                    "items": {"$ref": "#/$defs/FloatingRate"}
+                },
+                "initialStubRate": {
+                    "description": "An actual rate to apply for the initial or final stub period may have been agreed between the principal parties (in a similar way to how an initial rate may have been agreed for the first regular period). If an actual stub rate has been agreed then it would be included in this component. It will be a per annum rate, expressed as a decimal. A stub rate of 5% would be represented as 0.05.",
+                    "type": "string"
+                },
+                "finalStub": {
+                    "description": "",
+                    "type": "array",
+                    "items": {"$ref": "#/$defs/FloatingRate"}
+                }
+            }
+        },
+        "PrincipleExchanges": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "principalExchangesInitialExchange": {
+                    "description": "A true/false flag to indicate whether there is an initial exchange of principal on the effective date",
+                    "type": "boolean"
+                },
+                "principalExchangesFinalExchange": {
+                    "description": "A true/false flag to indicate whether there is a final exchange of principal on the termination date",
+                    "type": "boolean"
+                },
+                "principalExchangesIntermediateExchange": {
+                    "description": "A true/false flag to indicate whether there are intermediate or interim exchanges of principal during the term of the swap",
+                    "type": "boolean"
+                }
+            }
+        },
+        "CashFlows": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "cashflowMatchParameters": {
+                    "description": "A true/false flag to indicate whether the cashflows match the parametric definition of the stream, i.e. whether the cashflows could be regenerated from the parameters without loss of information",
+                    "type": "boolean"
+                },
+                "principalExchange": {
+                    "description": "",
+                    "type": "array",
+                    "items": {"$ref": "#/$defs/PrincipalExchange"}
+                },
+                "cashflowPrincipalExchangePresentValueCurrency": {
+                    "description": "The currency in which the present value is denominated",
+                    "type": "string"
+                },
+                "cashflowAdjustedPaymentDate": {
+                    "description": "The adjusted payment date and associated calculation period parameters required to calculate the actual or projected payment amount. A list of payment calculation period elements may be ordered in the document by ascending adjusted payment date",
+                    "type": "string",
+                    "format": "date"
+                },
+                "cashflowUnadjustedPaymentDate": {
+                    "description": "",
+                    "type": "string",
+                    "format": "date"
+                },
+                "cashflowFixedPaymentAmount": {
+                    "description": "A known fixed payment amount",
+                    "type": "number"
+                }
+            }
+        },
+        "PrincipalExchange": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "unadjustedPrincipalExchangeDate": {
+                    "description": "The principal exchange date",
+                    "type": "string",
+                    "format": "date"
+                },
+                "principalExchangeAmount": {
+                    "description": "The principal exchange amount. This amount should be positive if the stream payer is paying the exchange amount and signed negative if they are receiving it",
+                    "type": "number"
+                }
+            }
+        },
+        "SettlementProvision": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "settlementCurrency": {
+                    "description": "The currency that stream settles in (to support swaps that settle in a currency different from the notional currency).",
+                    "type": "string"
+                },
+                "nonDeliverableSettlementReferenceCurrency": {
+                    "description": "The non-deliverable settlement Currency",
+                    "type": "string"
+                },
+                "nonDeliverableSettlementFxFixingDatePeriod": {
+                    "description": "The date, when expressed as a relative date, on which the currency rate will be determined for the purpose of specifying the amount in deliverable currency.",
+                    "type": "string"
+                },
+                "nonDeliverableSettlementFxFixingDateDayType": {
+                    "description": "In the case of an offset specified as a number of days, this element defines whether consideration is given as to whether a day is a good business day or not. If a day type of business days is specified then non-business days are ignored when calculating the offset. The financial business centers to use for determination of business days are implied by the context in which this element is used. This element must only be included when the offset is specified as a number of days. If the offset is zero days then the dayType element should not be included.",
+                    "type": "string"
+                },
+                "nonDeliverableSettlementFxFixingDateBusinessDayConvention": {
+                    "description": "The convention for adjusting a date if it would otherwise fall on a day that is not a business day",
+                    "type": "string"
+                },
+                "nonDeliverableSettlementFxFixingDateBusinessCenters": {
+                    "description": "",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "nonDeliverableSettlementFxFixingScheduleUnadjustedDate": {
+                    "description": "",
+                    "type": "string",
+                    "format": "date"
+                },
+                "nonDeliverableSettlementFxFixingScheduleBusinessDayConvention": {
+                    "description": "",
+                    "type": "string"
+                },
+                "nonDeliverableSettlementFxFixingScheduleBusinessCenters": {
+                    "description": "",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "nonDeliverableSettlementRateOption": {
+                    "description": "The rate source for the conversion to the settlement currency. This source is specified through a scheme that reflects the terms of the Annex A to the 1998 Fx and Currency Option Definitions.",
+                    "type": "string"
+                }
+            }
+        },
+        "Step": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "stepDate": {
+                    "description": "On each step date the associated step value becomes effective. A list of steps may be ordered in the document by ascending step date. This day may be subject to adjustment in accordance with a business day convention linked to the Calculation Periods. ",
+                    "type": "string",
+                    "format": "date"
+                },
+                "stepValue": {
+                    "description": "A parametric representation of the step schedule, i.e. parameters used to generate the schedule.",
+                    "type": "number"
+                }
+            }
+        },
+        "FloatingRate": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "floatingRateIndex": {
+                    "description": "Specifies how the initial stub amount is calculated. A single floating rate tenor different to that used for the regular part of the calculation periods schedule may be specified, or two floating tenors may be specified. If two floating rate tenors are specified then Linear Interpolation (in accordance with the 2000 ISDA Definitions, Section 8.3. Interpolation) is assumed to apply. Alternatively, an actual known stub rate or stub amount may be specified. \nThe rates to be applied to the initial or final stub may be the linear interpolation of two different rates. While the majority of the time, the rate indices will be the same as that specified in the stream and only the tenor itself will be different, it is possible to specift two different rates. For example, a 2 month stub period may use the linear interpolation of a 1 month and 3 month rate. The different rates would be specified in this component. Note that a maximum of two rates can be specified. If a stub period uses the same floating rate index, including tenor, as the regular calculation periods then this should not be specified again within this component, i.e. the stub calculation period amount component may not need to be specified even if there is an initial or final stub period. If a stub period uses a different floating rate index compared to the regular calculation periods then this should be specified within this component. If specified here, they are likely to have id attributes, allowing them to be referenced from within the cashflows component.",
+                    "type": "string"
+                },
+                "floatingRatePeriod": {
+                    "description": "The ISDA Designated Maturity, i.e. the tenor of the floating rate",
+                    "type": "string"
+                }
+            }
+        },
+        "Premium": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "premiumPayer": {
+                    "description": "The party responsible for paying the premium payment",
+                    "type": "string"
+                },
+                "premiumReceiver": {
+                    "description": "The party responsible for receiving the premium payment",
+                    "type": "string"
+                },
+                "premiumPaymentAmount": {
+                    "description": "The premium payment amount",
+                    "type": "number"
+                },
+                "premiumPaymentCurrency": {
+                    "description": "The premium payment currency",
+                    "type": "string"
+                },
+                "unadjustedPremiumPaymentDate": {
+                    "description": "The payment date. This date is subject to adjustment in accordance with any applicable business day convention.",
+                    "type": "string",
+                    "format": "date"
+                },
+                "premiumPaymentDateBusinessDayConvention": {
+                    "description": "The business day convention used for adjusting the date if it would otherwise fall on a day that is not a business date in the specified business centers.",
+                    "type": "string"
+                },
+                "premiumPaymentDateBusinessCenters": {
+                    "description": "The business centers used for adjusting the date if it would otherwise fall on a day that is not a business date in the specified business centers.",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "forwardPremium": {
+                    "description": "Indicates if the Swaption premium payment amount is live or the payment has been settled at the time of the cancellation event.",
+                    "type": "string"
+                }
+            }
+        },
+        "Exercise": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "americanExerciseRelativeCommencementDatePeriod": {
+                    "description": "A date specified as some offset to another date (the anchor date)",
+                    "type": "string"
+                },
+                "americanExerciseRelativeCommencementDateDayType": {
+                    "description": "In the case of an offset specified as a number of days, this element defines whether consideration is given as to whether a day is a good business day or not",
+                    "type": "string"
+                },
+                "americanExerciseRelativeCommencementDateBusinessDayConvention": {
+                    "description": "The convention for adjusting a date if it would otherwise fall on a day that is not a business day.",
+                    "type": "string"
+                },
+                "americanExerciseRelativeCommencementDateBusinessCenters": {
+                    "description": "",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "americanExerciseUnadjustedExpirationDate": {
+                    "description": "The last day within an exercise period for an American style option. For a European style option it is the only day within the exercise period.",
+                    "type": "string",
+                    "format": "date"
+                },
+                "americanExerciseExpirationDateBusinessDayConvention": {
+                    "description": "The convention for adjusting a date if it would otherwise fall on a day that is not a business day.",
+                    "type": "string"
+                },
+                "americanExerciseExpirationDateBusinessCenters": {
+                    "description": "The business centers used for adjusting the date if it would otherwise fall on a day that is not a business date in the specified business centers.",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "americanExerciseRelativeExpirationDatePeriod": {
+                    "description": "A date specified as some offset to another date (the anchor date)",
+                    "type": "string"
+                },
+                "americanExerciseRelativeExpirationDateDayType": {
+                    "description": "In the case of an offset specified as a number of days, this element defines whether consideration is given as to whether a day is a good business day or not",
+                    "type": "string"
+                },
+                "americanExerciseRelativeExpirationDateBusinessDayConvention": {
+                    "description": "The convention for adjusting a date if it would otherwise fall on a day that is not a business day.",
+                    "type": "string"
+                },
+                "americanExerciseRelativeExpirationDateBusinessCenters": {
+                    "description": "",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "americanExerciseExpirationDateRelativeTo": {
+                    "description": "A date specified as some offset to another date (the anchor date).",
+                    "type": "string"
+                },
+                "americanExerciseRelevantUnderlyingRelativeDatePeriod": {
+                    "description": "The date on the underlying set by the exercise of an option. What this date is depends on the option (e.g. in a swaption it is the swap effective date, in an extendible/cancelable provision it is the swap termination date).",
+                    "type": "string"
+                },
+                "americanExerciseRelevantUnderlyingRelativeDayType": {
+                    "description": "In the case of an offset specified as a number of days, this element defines whether consideration is given as to whether a day is a good business day or not",
+                    "type": "string"
+                },
+                "americanExerciseRelevantUnderlyingRelativeBusinessDayConvention": {
+                    "description": "The convention for adjusting a date if it would otherwise fall on a day that is not a business day.",
+                    "type": "string"
+                },
+                "americanExerciseRelevantUnderlyingRelativeBusinessCenters": {
+                    "description": "",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "americanExerciseRelevantUnderlyingDateScheduleBoundsUnadjustedFirstDate": {
+                    "description": "A date specified as some offset to another date (the anchor date).",
+                    "type": "string",
+                    "format": "date"
+                },
+                "americanExerciseRelevantUnderlyingDateScheduleBoundsUnadjustedLastDate": {
+                    "description": "A date specified as some offset to another date (the anchor date).",
+                    "type": "string",
+                    "format": "date"
+                },
+                "americanExerciseEarliestExerciseTime": {
+                    "description": "The earliest time at which notice of exercise can be given by the buyer to the seller (or seller's agent) i) on the expriation date, in the case of a European style option, (ii) on each bermuda option exercise date and the expiration date, in the case of a Bermuda style option the commencement date to, and including, the expiration date , in the case of an American option.",
+                    "type": "string"
+                },
+                "americanExerciseEarliestExerciseBusinessCenter": {
+                    "description": "",
+                    "type": "string"
+                },
+                "americanExerciseLatestExerciseTime": {
+                    "description": "For a Bermuda or American style option, the latest time on an exercise business day (excluding the expiration date) within the exercise period that notice can be given by the buyer to the seller or seller's agent. Notice of exercise given after this time will be deemed to have been given on the next exercise business day.",
+                    "type": "string"
+                },
+                "americanExerciseLatestExerciseBusinessCenter": {
+                    "description": "",
+                    "type": "string"
+                },
+                "americanExerciseExpirationTime": {
+                    "description": "The latest time for exercise on expirationDate.",
+                    "type": "string"
+                },
+                "americanExerciseExpirationBusinessCenter": {
+                    "description": "",
+                    "type": "string"
+                },
+                "europeanExerciseUnadjustedExpirationDate": {
+                    "description": "For a European style option it is the only day within the exercise period.",
+                    "type": "string",
+                    "format": "date"
+                },
+                "europeanExerciseExpirationDateBusinessDayConvention": {
+                    "description": "The convention for adjusting a date if it would otherwise fall on a day that is not a business day.",
+                    "type": "string"
+                },
+                "europeanExerciseExpirationDateBusinessCenters": {
+                    "description": "The business day convention and financial business centers used for adjusting the date if it would otherwise fall on a day that is not a business date in the specified business centers.",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "europeanExerciseRelativeExpirationDatePeriod": {
+                    "description": "A date specified as some offset to another date (the anchor date)",
+                    "type": "string"
+                },
+                "europeanExerciseRelativeExpirationDateDayType": {
+                    "description": "In the case of an offset specified as a number of days, this element defines whether consideration is given as to whether a day is a good business day or not",
+                    "type": "string"
+                },
+                "europeanExerciseRelativeExpirationDateBusinessDayConvention": {
+                    "description": "The convention for adjusting a date if it would otherwise fall on a day that is not a business day.",
+                    "type": "string"
+                },
+                "europeanExerciseRelativeExpirationDateBusinessCenters": {
+                    "description": "",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "europeanExerciseRelevantUnderlyingUnadjustedDate": {
+                    "description": "The date on the underlying set by the exercise of an option. What this date is depends on the option (e.g. in a swaption it is the swap effective date, in an extendible/cancelable provision it is the swap termination date)",
+                    "type": "string",
+                    "format": "date"
+                },
+                "europeanExerciseRelevantUnderlyingDateBusinessConvention": {
+                    "description": "The convention for adjusting a date if it would otherwise fall on a day that is not a business day.",
+                    "type": "string"
+                },
+                "europeanExerciseRelevantUnderlyingDateBusinessCenters": {
+                    "description": "",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "europeanExerciseEarliestExerciseTime": {
+                    "description": "The earliest time at which notice of exercise can be given by the buyer to the seller (or seller's agent) i) on the expriation date, in the case of a European style option, (ii) on each bermuda option exercise date and the expiration date, in the case of a Bermuda style option the commencement date to, and including, the expiration date , in the case of an American option.",
+                    "type": "string"
+                },
+                "europeanExerciseEarliestExerciseBusinessCenter": {
+                    "description": "",
+                    "type": "string"
+                },
+                "europeanExerciseExpirationTime": {
+                    "description": "The latest time for exercise on expirationDate.",
+                    "type": "string"
+                },
+                "europeanExerciseExpirationBusinessCenter": {
+                    "description": "",
+                    "type": "string"
+                },
+                "europeanExerciseFee": {
+                    "description": "A fee to be paid on exercise. This could be represented as an amount or a rate and notional reference on which to apply the rate.",
+                    "type": "string"
+                },
+                "bermudanExerciseUnadjustedDate": {
+                    "description": "The dates the define the Bermuda option exercise dates and the expiration date. The last specified date is assumed to be the expiration date. The dates can either be specified as a series of explicit dates and associated adjustments or as a series of dates defined relative to another schedule of dates, for example, the calculation period start dates. Where a relative series of dates are defined the first and last possible exercise dates can be separately specified.",
+                    "type": "string",
+                    "format": "date"
+                },
+                "bermudanExerciseDateBusinessDayConvention": {
+                    "description": "The convention for adjusting a date if it would otherwise fall on a day that is not a business day.",
+                    "type": "string"
+                },
+                "bermudanExerciseDateBusinessCenters": {
+                    "description": "The business day convention and financial business centers used for adjusting the date if it would otherwise fall on a day that is not a business date in the specified business centers.",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "bermudanExerciseRelativeDatePeriod": {
+                    "description": "A series of dates specified as some offset to another series of dates (the anchor dates).",
+                    "type": "string"
+                },
+                "bermudanExerciseRelativeDateDayType": {
+                    "description": "In the case of an offset specified as a number of days, this element defines whether consideration is given as to whether a day is a good business day or not. If a day type of business days is specified then non-business days are ignored when calculating the offset. The financial business centers to use for determination of business days are implied by the context in which this element is used. This element must only be included when the offset is specified as a number of days. If the offset is zero days then the dayType element should not be included.",
+                    "type": "string"
+                },
+                "bermudanExerciseRelativeDateBusinessDayConvention": {
+                    "description": "The convention for adjusting a date if it would otherwise fall on a day that is not a business day.",
+                    "type": "string"
+                },
+                "bermudanExerciseRelativeDateBusinessCenters": {
+                    "description": "",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "bermudanExerciseDateRelativeTo": {
+                    "description": "",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "bermudanExerciseRelevantUnderlyingUnadjustedDate": {
+                    "description": "The date on the underlying set by the exercise of an option. What this date is depends on the option (e.g. in a swaption it is the swap effective date, in an extendible/cancelable provision it is the swap termination date).",
+                    "type": "string",
+                    "format": "date"
+                },
+                "bermudanExerciseRelevantUnderlyingDateBusinessDayConvention": {
+                    "description": "The convention for adjusting a date if it would otherwise fall on a day that is not a business day.",
+                    "type": "string"
+                },
+                "bermudanExerciseRelevantUnderlyingDateBusinessCenters": {
+                    "description": "The business day convention and financial business centers used for adjusting the date if it would otherwise fall on a day that is not a business date in the specified business centers.",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "bermudanExerciseRelevantUnderlyingRelativeDatePeriod": {
+                    "description": "A series of dates specified as some offset to another series of dates (the anchor dates).",
+                    "type": "string"
+                },
+                "bermudanExerciseRelevantUnderlyingRelativeDayType": {
+                    "description": "",
+                    "type": "string"
+                },
+                "bermudanExerciseRelevantUnderlyingRelativeBusinessDayConvention": {
+                    "description": "The convention for adjusting a date if it would otherwise fall on a day that is not a business day.",
+                    "type": "string"
+                },
+                "bermudanExerciseRelevantUnderlyingRelativeBusinessCenters": {
+                    "description": "",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "bermudanExerciseRelevantUnderlyingRelativeDateScheduleBoundUnadjustedFirstDate": {
+                    "description": "The first date of a schedule. This can be used to restrict the range of values in a reference series of dates.",
+                    "type": "string",
+                    "format": "date"
+                },
+                "bermudanExerciseRelevantUnderlyingRelativeDateScheduleBoundUnadjustedLastDate": {
+                    "description": "The last date of a schedule. This can be used to restrict the range of values in a reference series of dates.",
+                    "type": "string",
+                    "format": "date"
+                },
+                "bermudanExerciseEarliestExerciseTime": {
+                    "description": "The earliest time at which notice of exercise can be given by the buyer to the seller (or seller's agent) i) on the expriation date, in the case of a European style option, (ii) on each bermuda option exercise date and the expiration date, in the case of a Bermuda style option the commencement date to, and including, the expiration date , in the case of an American option.",
+                    "type": "string"
+                },
+                "bermudanExerciseEarliestExerciseBusinessCenter": {
+                    "description": "",
+                    "type": "string"
+                },
+                "bermudanExerciseLatestExerciseTime": {
+                    "description": "For a Bermuda or American style option, the latest time on an exercise business day (excluding the expiration date) within the exercise period that notice can be given by the buyer to the seller or seller's agent. Notice of exercise given after this time will be deemed to have been given on the next exercise business day.",
+                    "type": "string"
+                },
+                "bermudanExerciseLatestExerciseBusinessCenter": {
+                    "description": "",
+                    "type": "string"
+                },
+                "bermudanExerciseExpirationTime": {
+                    "description": "The latest time for exercise on expirationDate.",
+                    "type": "string"
+                },
+                "bermudanExerciseExpirationBusinessCenter": {
+                    "description": "",
+                    "type": "string"
+                },
+                "exerciseProcedureManualFallbackExercise": {
+                    "description": "If fallback exercise is specified then the notional amount of the underlying swap, not previously exercised under the swaption, will be automatically exercised at the expiration time on the expiration date if at such time the buyer is in-the-money, provided that the difference between the settlement rate and the fixed rate under the relevant underlying swap is not less than one tenth of a percentage point (0.10% or 0.001). The term in-the-money is assumed to have the meaning defined in the 2000 ISDA Definitions, Section 17.4. In-the-money.",
+                    "type": "string"
+                },
+                "exerciseProcedureAutomaticExerciseThresholdRate": {
+                    "description": "",
+                    "type": "string"
+                },
+                "exerciseProcedureFollowUpConfirmation": {
+                    "description": "A flag to indicate whether follow-up confirmation of exercise (written or electronic) is required following telephonic notice by the buyer to the seller or seller's agent",
+                    "type": "boolean"
+                },
+                "exerciseProcedureLimitedRightToConfirm": {
+                    "description": "Has the meaning defined as part of the 1997 ISDA Government Bond Option Definitions, section 4.5 Limited Right to Confirm Exercise. If present, (i) the Seller may request the Buyer to confirm its intent if not done on or before the expiration time on the Expiration date (ii) specific rules will apply in relation to the settlement mode",
+                    "type": "string"
+                },
+                "exerciseProcedureSplitTicket": {
+                    "description": "",
+                    "type": "string"
+                }
+            }
+        },
+        "CashSettlement": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "cashSettlementValuationTime": {
+                    "description": "The time of the cash settlement valuation date when the cash settlement amount will be determined according to the cash settlement method if the parties have not otherwise been able to agree the cash settlement amount.",
+                    "type": "string"
+                },
+                "cashSettlementValuationTimeBusinessCenter": {
+                    "description": "",
+                    "type": "string"
+                },
+                "cashSettlementValuationDatePeriod": {
+                    "description": "The date on which the cash settlement amount will be determined according to the cash settlement method if the parties have not otherwise been able to agree the cash settlement amount. Time period and multiplier.",
+                    "type": "string"
+                },
+                "cashSettlementValuationDateDayType": {
+                    "description": "In the case of an offset specified as a number of days, this element defines whether consideration is given as to whether a day is a good business day or not. If a day type of business days is specified then non-business days are ignored when calculating the offset. The financial business centers to use for determination of business days are implied by the context in which this element is used. This element must only be included when the offset is specified as a number of days. If the offset is zero days then the dayType element should not be included.",
+                    "type": "string"
+                },
+                "cashSettlementValuationDateBusinessDayConvention": {
+                    "description": "The convention for adjusting a date if it would otherwise fall on a day that is not a business day.",
+                    "type": "string"
+                },
+                "cashSettlementValuationDateBusinessCenters": {
+                    "description": "",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "cashSettlementUnadjustedPaymentDates": {
+                    "description": "A series of dates that shall be subject to adjustment if they would otherwise fall on a day that is not a business day in the specified business centers, together with the convention for adjusting the date\nThe date on which the cash settlement amount will be paid, subject to adjustment in accordance with any applicable business day convention. This component would not be present for a mandatory early termination provision where the cash settlement payment date is the mandatory early termination date.",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "cashSettlementPaymentDateBusinessDayConvention": {
+                    "description": "The convention for adjusting a date if it would otherwise fall on a day that is not a business day.",
+                    "type": "string"
+                },
+                "cashSettlementPaymentDateBusinessCenters": {
+                    "description": "The business day convention and financial business centers used for adjusting the date if it would otherwise fall on a day that is not a business date in the specified business centers.",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "cashSettlementRelativePaymentDatePeriod": {
+                    "description": "A date specified as some offset to another date (the anchor date). Date multiplier and period",
+                    "type": "string"
+                },
+                "cashSettlementRelativePaymentDateDayType": {
+                    "description": "In the case of an offset specified as a number of days, this element defines whether consideration is given as to whether a day is a good business day or not. If a day type of business days is specified then non-business days are ignored when calculating the offset. The financial business centers to use for determination of business days are implied by the context in which this element is used. This element must only be included when the offset is specified as a number of days. If the offset is zero days then the dayType element should not be included.",
+                    "type": "string"
+                },
+                "cashSettlementRelativePaymentDateBusinessDayConvention": {
+                    "description": "The convention for adjusting a date if it would otherwise fall on a day that is not a business day.",
+                    "type": "string"
+                },
+                "cashSettlementRelativePaymentDateBusinessCenters": {
+                    "description": "",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "cashSettlementPaymentDateBusinessDateRangeUnadjustedFirstDate": {
+                    "description": "An ISDA defined cash settlement method used for the determination of the applicable cash settlement amount. The first date of a date range",
+                    "type": "string",
+                    "format": "date"
+                },
+                "cashSettlementPaymentDateBusinessDateRangeUnadjustedLastDate": {
+                    "description": "",
+                    "type": "string",
+                    "format": "date"
+                },
+                "cashSettlementPaymentDateBusinessDateRangeBusinessDayConvention": {
+                    "description": "The convention for adjusting a date if it would otherwise fall on a day that is not a business day.",
+                    "type": "string"
+                },
+                "cashSettlementPaymentDateBusinessDateRangeBusinessCenters": {
+                    "description": "The business day convention and financial business centers used for adjusting the date if it would otherwise fall on a day that is not a business date in the specified business centers.",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "cashSettlementMidMarketValuationIndicativeQuotationsCashSettlementCurrency": {
+                    "description": "The currency, or currencies, in which the cash settlement amount(s) will be calculated and settled. While the order in which the currencies are stated is unimportant, the cash settlement currency or currencies must correspond to one or both of the constituent currencies of the swap transaction",
+                    "type": "string"
+                },
+                "cashSettlementMidMarketValuationIndicativeQuotationsApplicableCsa": {
+                    "description": "This may be used to whaty type of CSA (credit support annex/agreement) is to be used for cash settlement purposes",
+                    "type": "string"
+                },
+                "cashSettlementMidMarketValuationIndicativeQuotationsReferenceBanks": {
+                    "description": "A container for a set of reference institutions. These reference institutions may be called upon to provide rate quotations as part of the method to determine the applicable cash settlement amount. If institutions are not specified, it is assumed that reference institutions will be agreed between the parties on the exercise date, or in the case of swap transaction to which mandatory early termination is applicable, the cash settlement valuation date",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "cashSettlementMidMarketValuationIndicativeQuotationsAgreedDiscountRate": {
+                    "description": "This may be used to indicate the discount rate to be used for cash collateral for cash settlement purposes",
+                    "type": "string"
+                },
+                "cashSettlementMidMarketValuationIndicativeQuotationsCashCollateralCurrency": {
+                    "description": "This may be used to indicate the currency of cash collateral for cash settlement purposes.",
+                    "type": "string"
+                },
+                "cashSettlementMidMarketValuationIndicativeQuotationsCashCollateralInterestRate": {
+                    "description": "This may be used to indicate the interest rate to be used for cash collateral for cash settlement purposes.",
+                    "type": "string"
+                },
+                "cashSettlementMidMarketValuationIndicativeQuotationsAlternateCashCollateralCurrency": {
+                    "description": "This may be used to indicate the currency of cash collateral for cash settlement purposes.",
+                    "type": "string"
+                },
+                "cashSettlementMidMarketValuationIndicativeQuotationsAlternateCashCollateralInterestRate": {
+                    "description": "This may be used to indicate the interest rate to be used for cash collateral for cash settlement purposes.",
+                    "type": "string"
+                },
+                "cashSettlementMidMarketValuationIndicativeQuotationsAlternateCashSettlementCurrency": {
+                    "description": "The currency, or currencies, in which the cash settlement amount(s) will be calculated and settled. While the order in which the currencies are stated is unimportant, the cash settlement currency or currencies must correspond to one or both of the constituent currencies of the swap transaction.",
+                    "type": "string"
+                },
+                "cashSettlementMidMarketValuationIndicativeQuotationsAlternateApplicableCsa": {
+                    "description": "This may be used to define what type of CSA (credit support annex/agreement) is to be used for cash settlement purposes.",
+                    "type": "string"
+                },
+                "cashSettlementMidMarketValuationIndicativeQuotationsAlternateAgreedDiscountRate": {
+                    "description": "This may be used to indicate the discount rate to be used for cash collateral for cash settlement purposes.",
+                    "type": "string"
+                },
+                "cashSettlementMidMarketValuationCalculationAgentDeterminationCashSettlementCurrency": {
+                    "description": "The currency, or currencies, in which the cash settlement amount(s) will be calculated and settled. While the order in which the currencies are stated is unimportant, the cash settlement currency or currencies must correspond to one or both of the constituent currencies of the swap transaction",
+                    "type": "string"
+                },
+                "cashSettlementMidMarketValuationCalculationAgentDeterminationApplicableCsa": {
+                    "description": "This may be used to whaty type of CSA (credit support annex/agreement) is to be used for cash settlement purposes",
+                    "type": "string"
+                },
+                "cashSettlementMidMarketValuationCalculationAgentDeterminationCashCollateralCurrency": {
+                    "description": "This may be used to indicate the currency of cash collateral for cash settlement purposes.",
+                    "type": "string"
+                },
+                "cashSettlementMidMarketValuationCalculationAgentDeterminationCashCollateralInterestRate": {
+                    "description": "This may be used to indicate the interest rate to be used for cash collateral for cash settlement purposes.",
+                    "type": "string"
+                },
+                "cashSettlementMidMarketValuationCalculationAgentDeterminationAgreedDiscountRate": {
+                    "description": "This may be used to indicate the discount rate to be used for cash collateral for cash settlement purposes.",
+                    "type": "string"
+                },
+                "cashSettlementBreakCalculationMethod": {
+                    "description": "",
+                    "type": "string"
+                },
+                "cashSettlementReplacementValueFirmQuotationsCashSettlementCurrency": {
+                    "description": "ISDA defined cash settlement methods based on replacement value. The currency, or currencies, in which the cash settlement amount(s) will be calculated and settled. While the order in which the currencies are stated is unimportant, the cash settlement currency or currencies must correspond to one or both of the constituent currencies of the swap transaction.",
+                    "type": "string"
+                },
+                "cashSettlementReplacementValueFirmQuotationsCashSettlementReferenceBanks": {
+                    "description": "A container for a set of reference institutions. These reference institutions may be called upon to provide rate quotations as part of the method to determine the applicable cash settlement amount.",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "cashSettlementReplacementValueFirmQuotationsProtectedPartyDetermination": {
+                    "description": "This may be used to specify which party is protected (e.g. under Replacement Value cash settlement methods)",
+                    "type": "string"
+                },
+                "cashSettlementReplacementValueFirmQuotationsProtectedPartyReference": {
+                    "description": "This may be used to specify which party is protected (e.g. under Replacement Value cash settlement methods)",
+                    "type": "string"
+                },
+                "cashSettlementReplacementValueFirmQuotationsCashCollateralCurrency": {
+                    "description": "An ISDA defined cash settlement method used for the determination of the applicable cash settlement amount. The method is defined in the 2021 ISDA Definitions, Section 18.2.4.",
+                    "type": "string"
+                },
+                "cashSettlementReplacementValueFirmQuotationsPrescribedDocumentationAdjustment": {
+                    "description": "This may be used to indicate that \"prescribed documentation adjustment\" is applicable.",
+                    "type": "string"
+                },
+                "cashSettlementReplacementValueCalculationAgentDeterminationCashCollateralCurrency": {
+                    "description": "This may be used to indicate the currency of cash collateral for cash settlement purposes",
+                    "type": "string"
+                },
+                "cashSettlementReplacementValueCalculationAgentDeterminationProtectedPartyPartyDetermination": {
+                    "description": "This may be used to specify which party is protected (e.g. under Replacement Value cash settlement methods)",
+                    "type": "string"
+                },
+                "cashSettlementReplacementValueCalculationAgentDeterminationProtectedPartyReference": {
+                    "description": "The party specific party that is referenced",
+                    "type": "string"
+                },
+                "cashSettlementCashPriceMethodCashSettlementReferenceBanks": {
+                    "description": "A container for a set of reference institutions. These reference institutions may be called upon to provide rate quotations as part of the method to determine the applicable cash settlement amount. If institutions are not specified, it is assumed that reference institutions will be agreed between the parties on the exercise date, or in the case of swap transaction to which mandatory early termination is applicable, the cash settlement valuation date",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "cashSettlementCashPriceMethodSettlementRateSourceReferenceBanks": {
+                    "description": "A container for a set of reference institutions. These reference institutions may be called upon to provide rate quotations as part of the method to determine the applicable cash settlement amount. If institutions are not specified, it is assumed that reference institutions will be agreed between the parties on the exercise date, or in the case of swap transaction to which mandatory early termination is applicable, the cash settlement valuation date",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "cashSettlementCashPriceMethodCashSettlementCurrency": {
+                    "description": "The currency in which the cash settlement amount will be calculated and settled",
+                    "type": "string"
+                },
+                "cashSettlementCashPriceMethodCashQuotationRateType": {
+                    "description": "Which rate quote is to be observed, either Bid, Mid, Offer or Exercising Party Pays",
+                    "type": "string"
+                },
+                "cashSettlementCashPriceAlternateMethodSettlementRateSourceReferenceBanks": {
+                    "description": "A container for a set of reference institutions. These reference institutions may be called upon to provide rate quotations as part of the method to determine the applicable cash settlement amount. If institutions are not specified, it is assumed that reference institutions will be agreed between the parties on the exercise date, or in the case of swap transaction to which mandatory early termination is applicable, the cash settlement valuation date",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "cashSettlementCashPriceAlternateMethodCashSettlementCurrency": {
+                    "description": "The currency in which the cash settlement amount will be calculated and settled.",
+                    "type": "string"
+                },
+                "cashSettlementCashPriceAlternateMethodQuotationRateType": {
+                    "description": "Which rate quote is to be observed, either Bid, Mid, Offer or Exercising Party Pays",
+                    "type": "string"
+                },
+                "cashSettlementParYieldCurveAdjustedMethodSettlementRateSourceReferenceBanks": {
+                    "description": "A container for a set of reference institutions. These reference institutions may be called upon to provide rate quotations as part of the method to determine the applicable cash settlement amount. If institutions are not specified, it is assumed that reference institutions will be agreed between the parties on the exercise date, or in the case of swap transaction to which mandatory early termination is applicable, the cash settlement valuation date",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "cashSettlementParYieldCurveAdjustedMethodSettlementRateSource": {
+                    "description": "The method for obtaining a settlement rate. This may be from some information source (e.g. Reuters) or from a set of reference banks",
+                    "type": "string"
+                },
+                "cashSettlementParYieldCurveAdjustedMethodQuotationRateType": {
+                    "description": "Which rate quote is to be observed, either Bid, Mid, Offer or Exercising Party Pays",
+                    "type": "string"
+                },
+                "cashSettlementZeroCouponYieldAdjustedMethodRateSource": {
+                    "description": "The method for obtaining a settlement rate",
+                    "type": "string"
+                },
+                "cashSettlementZeroCouponYieldAdjustedMethodSettlementRateSourceReferenceBanks": {
+                    "description": "A container for a set of reference institutions. These reference institutions may be called upon to provide rate quotations as part of the method to determine the applicable cash settlement amount. If institutions are not specified, it is assumed that reference institutions will be agreed between the parties on the exercise date, or in the case of swap transaction to which mandatory early termination is applicable, the cash settlement valuation date",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "cashSettlementZeroCouponYieldAdjustedMethodQuotationRateType": {
+                    "description": "Which rate quote is to be observed, either Bid, Mid, Offer or Exercising Party Pays",
+                    "type": "string"
+                },
+                "cashSettlementCrossCurrencyMethodSettlementRateSourceReferenceBanks": {
+                    "description": "A container for a set of reference institutions. These reference institutions may be called upon to provide rate quotations as part of the method to determine the applicable cash settlement amount. If institutions are not specified, it is assumed that reference institutions will be agreed between the parties on the exercise date, or in the case of swap transaction to which mandatory early termination is applicable, the cash settlement valuation date",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "cashSettlementCrossCurrencyMethodCashSettlementCurrency": {
+                    "description": "The currency, or currencies, in which the cash settlement amount(s) will be calculated and settled. While the order in which the currencies are stated is unimportant, the cash settlement currency or currencies must correspond to one or both of the constituent currencies of the swap transaction",
+                    "type": "string"
+                },
+                "cashSettlementCrossCurrencyMethodQuotationRateType": {
+                    "description": "Which rate quote is to be observed, either Bid, Mid, Offer or Exercising Party Pays",
+                    "type": "string"
+                },
+                "cashSettlementCollateralizedCashPriceMethodSettlementRateSource": {
+                    "description": "The method for obtaining a settlement rate",
+                    "type": "string"
+                },
+                "cashSettlementCollateralizedCashPriceMethodSettlementRateSourceReferenceBanks": {
+                    "description": "A container for a set of reference institutions. These reference institutions may be called upon to provide rate quotations as part of the method to determine the applicable cash settlement amount. If institutions are not specified, it is assumed that reference institutions will be agreed between the parties on the exercise date, or in the case of swap transaction to which mandatory early termination is applicable, the cash settlement valuation date.",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "cashSettlementCollateralizedCashPriceMethodQuotationRateType": {
+                    "description": "Which rate quote is to be observed, either Bid, Mid, Offer or Exercising Party Pays",
+                    "type": "string"
+                },
+                "cashSettlementCollateralizedCashPriceMethodCashSettlementCurrency": {
+                    "description": "",
+                    "type": "string"
+                },
+                "cashSettlementCollateralizedCashPriceMethodAgreedDiscountRate": {
+                    "description": "",
+                    "type": "string"
+                },
+                "cashSettlementParYieldCurveUnadjustedMethodSettlementRateSource": {
+                    "description": "The method for obtaining a settlement rate",
+                    "type": "string"
+                },
+                "cashSettlementParYieldCurveUnadjustedMethodQuotationRateType": {
+                    "description": "Which rate quote is to be observed, either Bid, Mid, Offer or Exercising Party Pays",
+                    "type": "string"
+                }
+            }
+        },
+        "EarlyTerminationProvision": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "mandatoryEarlyTerminationUnadjustedDate": {
+                    "description": "A mandatory early termination provision to terminate the swap at fair value",
+                    "type": "string",
+                    "format": "date"
+                },
+                "mandatoryEarlyTerminationDateBusinessDayConvention": {
+                    "description": "The convention for adjusting a date if it would otherwise fall on a day that is not a business day.",
+                    "type": "string"
+                },
+                "mandatoryEarlyTerminationDateBusinessCenters": {
+                    "description": "The business day convention and financial business centers used for adjusting the date if it would otherwise fall on a day that is not a business date in the specified business centers.",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "calculationAgent": {
+                    "description": "The ISDA Calculation Agent responsible for performing duties associated with an optional/mandatory early termination.",
+                    "type": "string"
+                },
+                "cashSettlement": {
+                    "description": "",
+                    "$ref": "#/$defs/CashSettlement"
+                },
+                "optionalEarlyTermination": {
+                    "description": "",
+                    "$ref": "#/$defs/Exercise"
+                },
+                "followUpConfirmation": {
+                    "description": "A flag to indicate whether follow-up confirmation of exercise (written or electronic) is required following telephonic notice by the buyer to the seller or seller's agent",
+                    "type": "boolean"
+                }
+            }
+        },
+        "CancelableProvision": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "buyer": {
+                    "description": "The buyer, ie. pays for this instrument and receives the rights defined by it.",
+                    "type": "string"
+                },
+                "seller": {
+                    "description": "The seller i.e. that grants the rights defined by this instrument and in return receives a payment for it.",
+                    "type": "string"
+                },
+                "exercise": {
+                    "description": "",
+                    "$ref": "#/$defs/Exercise"
+                },
+                "mandatoryEarlyTerminationDateBusinessCenters": {
+                    "description": "The business day convention and financial business centers used for adjusting the date if it would otherwise fall on a day that is not a business date in the specified business centers.",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "followUpConfirmation": {
+                    "description": "A flag to indicate whether follow-up confirmation of exercise (written or electronic) is required following telephonic notice by the buyer to the seller or seller's agent",
+                    "type": "boolean"
+                },
+                "discrepancyClause": {
+                    "description": "This element is optional and is intended to indicate if additional Discrepancy Clause details are applicable to the underlying IRS or OIS with a Cancellable Provision",
+                    "type": "boolean"
+                },
+                "discrepancyClauseTitle": {
+                    "description": "If a Cancellable Discrepancy Clause is applicable on a Cancellable IRS or OIS transaction, this element will specify the name assigned to the underlying Discrepancy Clause language agreed between two parties",
+                    "type": "string"
+                },
+                "discrepancyClauseAgreementDate": {
+                    "description": "This element indicates the date on which the Discrepancy Clause Language was agreed",
+                    "type": "string"
+                }
+            }
+        },
+        "AdditionalPayment": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "additionalPaymentPayer": {
+                    "description": "A reference to the party responsible for making the additional payment",
+                    "type": "string"
+                },
+                "additionalPaymentReceiver": {
+                    "description": "A reference to the party responsible for receving the additional payment",
+                    "type": "string"
+                },
+                "additionalPaymentAmount": {
+                    "description": "The future value notional is normally only required for BRL CDI Swaps. The value is calculated as follows: Future Value Notional = Notional Amount * (1 + Fixed Rate) ^ (Fixed Rate Day Count Fraction). The currency should always match that expressed in the notional schedule. The value date should match the adjusted termination date",
+                    "type": "number"
+                },
+                "additionalPaymentCurrency": {
+                    "description": "The currency in which the future notional amount is denominated.",
+                    "type": "string"
+                },
+                "additionalPaymentUnadjustedPaymentDate": {
+                    "description": "A mandatory early termination provision to terminate the swap at fair value",
+                    "type": "string",
+                    "format": "date"
+                },
+                "additionalPaymentBusinessDayConvention": {
+                    "description": "The convention for adjusting a date if it would otherwise fall on a day that is not a business day.",
+                    "type": "string"
+                },
+                "additionalPaymentBusinessCenters": {
+                    "description": "The business day convention and financial business centers used for adjusting the date if it would otherwise fall on a day that is not a business date in the specified business centers.",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "additionalPaymentType": {
+                    "description": "A classification of the type of fee or additional payment, e.g. brokerage, upfront fee etc",
+                    "type": "string"
+                }
+            }
+        },
+        "IndependantAmount": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "independantAmountPayer": {
+                    "description": "A reference to the party responsible for making the payment",
+                    "type": "string"
+                },
+                "independantAmountReceiver": {
+                    "description": "A reference to the party responsible for receving the additional payment",
+                    "type": "string"
+                },
+                "independantAmountUnadjustedPaymentDate": {
+                    "description": "The payment date subject to adjustment",
+                    "type": "string",
+                    "format": "date"
+                },
+                "independantAmountUnadjustedPaymentBusinessDayConvention": {
+                    "description": "The convention for adjusting a date if it would otherwise fall on a day that is not a business day.",
+                    "type": "string"
+                },
+                "independantAmountUnadjustedPaymentBusinessCenters": {
+                    "description": "The business day convention and financial business centers used for adjusting the date if it would otherwise fall on a day that is not a business date in the specified business centers.",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "independantPaymentAmount": {
+                    "description": "The future value notional is normally only required for BRL CDI Swaps. The value is calculated as follows: Future Value Notional = Notional Amount * (1 + Fixed Rate) ^ (Fixed Rate Day Count Fraction). The currency should always match that expressed in the notional schedule. The value date should match the adjusted termination date",
+                    "type": "number"
+                },
+                "independantPaymentCurrency": {
+                    "description": "The currency in which the future notional amount is denominated.",
+                    "type": "string"
+                }
+            }
+        },
+        "AdditionalTerms": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "bondReferenceInstrumentId": {
+                    "description": "Reference to a bond underlyer to represent an asset swap or Condition Precedent Bond",
+                    "type": "string"
+                },
+                "bondReferenceConditionPrecedent": {
+                    "description": "To indicate whether the Condition Precedent Bond is applicable. The swap contract is only valid if the bond is issued and if there is any dispute over the terms of fixed stream then the bond terms would be used",
+                    "type": "string"
+                },
+                "bondReferenceDiscrepancyClause": {
+                    "description": "The payment date subject to adjustment",
+                    "type": "string"
+                },
+                "bondCouponRate": {
+                    "description": "Specifies the coupon rate (expressed in percentage) of a fixed income security or convertible bond",
+                    "type": "string"
+                },
+                "bondReferenceMaturity": {
+                    "description": "The date when the principal amount of a security becomes due and payable.",
+                    "type": "string"
+                },
+                "bondMaturityYear": {
+                    "description": "This field specifies the Bond Maturity year listed on the Municipal market data for the AAA municipal Bonds for a Rate Lock",
+                    "type": "string"
+                },
+                "spreadCalculationMethod": {
+                    "description": "Code values for different methods of spread calculation",
+                    "type": "string"
+                },
+                "associatedBondId": {
+                    "description": "The underlying bond details if the swap price was negotiated as a spread over underlying bond reference instruments. Note that this element should not be present for a FRA, OIS, CapFloor or Swaption trade",
+                    "type": "string"
+                },
+                "associatedBondName": {
+                    "description": "A free format description of the bond instrument.",
+                    "type": "string"
+                },
+                "associatedBondQuantity": {
+                    "description": "The bond face amount expressed as a percentage of the notional amount of the swap. 50 percent would be represented as 0.5",
+                    "type": "string"
+                },
+                "associatedBondFaceAmount": {
+                    "description": "The face amount of the bond",
+                    "type": "string"
+                },
+                "associatedBondPriceType": {
+                    "description": "A classification of the format used to express the bond price and hence how the value in the swBondPrice element should be interpreted. For example, whether the price is in a decimal format or whether the fractional part is expressed in 32nds of 1% of par value etc",
+                    "type": "string"
+                },
+                "associatedBondPrice": {
+                    "description": "The clean bond price expressed in a format consistent with the price type specified by the swPriceType element",
+                    "type": "string"
+                }
+            }
+        },
+        "RatesDocumentationDetail": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "masterAgreementType": {
+                    "description": "",
+                    "type": "string"
+                },
+                "contractualDefinitions": {
+                    "description": "",
+                    "type": "array",
+                    "items": {"type": "string"}
+                }
+            }
+        },
+        "EventDetail": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "novationDate": {
+                    "description": "Date when the novation was executed",
+                    "type": "string",
+                    "format": "date"
+                },
+                "novationTradeDate": {
+                    "description": "Date when the novation was agreed",
+                    "type": "string",
+                    "format": "date"
+                },
+                "novatedAmount": {
+                    "description": "The agreed amount that was novated",
+                    "type": "number"
+                },
+                "novatedCurrency": {
+                    "description": "The currency of the amount that was novated",
+                    "type": "string"
+                },
+                "fullFirstCalculationPeriod": {
+                    "description": "The applicability of the Full First Calculation Period as defined in the 2004 ISDA Novation Definitions.\n",
+                    "type": "string"
+                },
+                "firstPeriodStartDate": {
+                    "description": "The start date of the calculation period if the date falls before the effective date. It must only be specified if it is not equal to the effective date. This date may be subject to adjustment in accordance with a business day convention",
+                    "type": "string",
+                    "format": "date"
+                },
+                "economicAmendmentType": {
+                    "description": "FpML Extension. A flag to identify if the trade is a part of an economic amendment e.g Transition from IBOR to RFRs",
+                    "type": "string"
+                },
+                "economicAmendmentReason": {
+                    "description": "FpML Extension. A field capturing the reason for economic amendment",
+                    "type": "string"
+                },
+                "eventTradeDate": {
+                    "description": "FpML Extension. For MW. this will be present if the trade has a trade status of Exit, Cancelled or Amended and will contain a date that corresponds to the trade date of the post trade event",
+                    "type": "string",
+                    "format": "date"
+                },
+                "eventEffectiveDate": {
+                    "description": "FpML Extension. For MW, this element will be present if the trade has a trade status of Exit, Cancelled or Amended and will contain a date that corresponds to the effective date of the post trade event ",
+                    "type": "string",
+                    "format": "date"
+                },
+                "fee": {
+                    "description": "One or more Fees associated to the post trade event",
+                    "type": "array",
+                    "items": {"$ref": "#/$defs/Fee"}
+                }
+            }
+        },
+        "Fee": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "feePayer": {
+                    "description": "Used to capture the payer of the fee associated to a post trade event, for example the novation fee betwee the OR and EE",
+                    "type": "string"
+                },
+                "feeReceiver": {
+                    "description": "Used to capture the receiver of the fee associated to a post trade event, for example the novation fee betwee the OR and EE",
+                    "type": "string"
+                },
+                "feeAmount": {
+                    "description": "The fee amount to be exchanged",
+                    "type": "number"
+                },
+                "feeCurrency": {
+                    "description": "The currency of the fee amount to be exchanged",
+                    "type": "string"
+                },
+                "feeUnadjustedDate": {
+                    "description": "The unadjusted payment date for the  fee amount to be exchanged",
+                    "type": "string",
+                    "format": "date"
+                },
+                "feeBusinessDayConvention": {
+                    "description": "The business day convention used for adjusting the payment date",
+                    "type": "string"
+                },
+                "feeBusinessCenters": {
+                    "description": "The set of business centers used to determine whether the fee payment date is a business day",
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "feeType": {
+                    "description": "A reference to the payment type",
+                    "type": "string"
+                }
+            }
+        },
+        "RatesSettlementDetail": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "settlementAgent": {
+                    "description": "The agent involved in settling the trade. In the case of bilateral MW trades, where customers adopt LSEG's Swap Agent service, this will indicate SwapAgent Ltd.",
+                    "type": "string"
+                },
+                "settlementAgentPartyId": {
+                    "description": "The settlement agent's MW entity reference (BIC)",
+                    "type": "string"
+                },
+                "settlementAgentModel": {
+                    "description": "The settlement agent's calculation model CMS or STM",
+                    "type": "string"
+                },
+                "settlementAgentStatus": {
+                    "description": "The status echo'ed back from the settlement agent",
+                    "type": "string"
+                },
+                "settlementAgentReference": {
+                    "description": "Any associated references to the settlementAgentStatus",
+                    "type": "string"
+                },
+                "settlementAgentAgreement": {
+                    "description": "Any other agreement configured against the settlement agency.",
+                    "type": "string"
+                },
+                "settlementAgentAgreementSubType": {
+                    "description": "The sub type related to any other agreement configured against the settlement agency.",
+                    "type": "string"
+                },
+                "initialExchangeSentToCLS": {
+                    "description": "Indicates payment notification to CLS for initial exchange.",
+                    "type": "string"
+                },
+                "initialExchangeCLSSettlementStatus": {
+                    "description": "Indicates the CLS status of the initial exchange",
+                    "type": "string"
+                },
+                "initialExchangeCLSSettlementStatusReason": {
+                    "description": "Indicates the reason for the CLS status of the initial exchange",
+                    "type": "string"
+                },
+                "finalExchangeSentToCLS": {
+                    "description": "Indicates payment notification to CLS for final exchange  ",
+                    "type": "string"
+                },
+                "finalExchangeCLSSettlementStatus": {
+                    "description": "Indicates the CLS status of the final exchange",
+                    "type": "string"
+                },
+                "finalExchangeCLSSettlementStatusReason": {
+                    "description": "Indicates the reason for the CLS status of the final exchange",
+                    "type": "string"
+                }
+            }
+        },
+        "LegTypeEnum": {
+            "type": "string",
+            "enum": [
+                "Fixed",
+                "Floating",
+                "FRA",
+                "RateLock"
+            ]
+        },
+        "CompoundingMethodEnum": {
+            "description": "Flat - Compounding excludes the spread. Note that the first compounding period has it's interest calculated including any spread then subsequent periods compound this at a rate excluding the spread, None - No compounding is to be applied, Straight - Straight compounding, compounding includes the spread, SpreadExclusive - Spread Exclusive compounding",
+            "type": "string",
+            "enum": [
+                "Flat",
+                "None",
+                "Straight",
+                "SpreadExclusive"
+            ]
+        },
+        "RatesProductTypeEnum": {
+            "type": "string",
+            "enum": [
+                "SingleCurrencyInterestRateSwap",
+                "Cross Currency IRS",
+                "Cross Currency Basis Swap",
+                "FRA",
+                "Swaption",
+                "CapFloor",
+                "OIS",
+                "ZC Inflation Swap",
+                "Fixed Fixed Swap",
+                "Single Currency Basis Swap",
+                "Rate Lock"
+            ]
+        }
+    }
+}

@@ -1,0 +1,452 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "file:./OsttraETD.json",
+    "title": "Osttra ETD schema",
+    "description": "Version 15.0 last updated 2025-08-20",
+    "type": "object",
+    "properties": {
+        "etd": {"$ref": "#/$defs/ETD"}
+    },
+    "$defs": {
+        "ETD": {
+            "type": "object",
+            "required": [
+                "tradeDate",
+                "instrument"
+            ],
+            "additionalProperties": false,
+            "properties": {
+                "tradeDate": {
+                    "description": "The Trade Date",
+                    "type": "string",
+                    "format": "date"
+                },
+                "instrument": {
+                    "description": "Instrument level detail",
+                    "$ref": "#/$defs/InstrumentDetail"
+                },
+                "underlyingInstruments": {
+                    "type": "array",
+                    "items": {"$ref": "#/$defs/UnderlyingInstrument"}
+                },
+                "orders": {
+                    "type": "array",
+                    "items": {"$ref": "#/$defs/OrderDetail"}
+                },
+                "executions": {
+                    "type": "array",
+                    "items": {"$ref": "#/$defs/ExecutionDetail"}
+                },
+                "allocations": {
+                    "type": "array",
+                    "items": {"$ref": "#/$defs/AllocationDetail"}
+                },
+                "miscFeeData": {
+                    "type": "array",
+                    "items": {"$ref": "#/$defs/MiscFeeData"}
+                }
+            }
+        },
+        "InstrumentDetail": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "securityType": {
+                    "description": "Security type. FUT - Futures or OPT - Options",
+                    "$ref": "#/$defs/SecurityTypeEnum"
+                },
+                "side": {
+                    "description": "1 = Buy, 2 = Sell",
+                    "$ref": "#/$defs/SideTypeEnum"
+                },
+                "symbol": {
+                    "description": "Exchange symbol",
+                    "type": "string"
+                },
+                "instrumentVendor": {
+                    "description": "Instrument propriety vendor. By default 5 (RIC). If RIC does not exist then BBG(A)",
+                    "type": "string"
+                },
+                "instrumentValue": {
+                    "description": "Instrument value",
+                    "type": "string"
+                },
+                "cFIcode": {
+                    "description": "Indicates the type of security using ISO 10962 standard, Classification of Financial Instruments (CFI code) values.",
+                    "type": "string"
+                },
+                "securityDescription": {
+                    "description": "Security description. Contract name",
+                    "type": "string"
+                },
+                "securityExchange": {
+                    "description": "Market used to help identify a security.",
+                    "type": "string"
+                },
+                "contractMaturity": {
+                    "description": "Contract's month. For regular contracts -YYYYMM. For daily/weekly and flexible contract it can be a full date",
+                    "type": "string"
+                },
+                "optionType": {
+                    "description": "Put or Call. P - Put, C - Call",
+                    "$ref": "#/$defs/OptionTypeEnum"
+                },
+                "strikePrice": {
+                    "description": "Option strike price",
+                    "type": "string"
+                },
+                "strikeCurrency": {
+                    "description": "Currency in which the strike price is denominated",
+                    "type": "string"
+                },
+                "optionAttribute": {
+                    "description": "Provided to support versioning of option contracts as a result of corporate actions or events. Use of this field is defined by counterparty agreement or market conventions",
+                    "type": "string"
+                },
+                "exerciseStyle": {
+                    "description": "Type of exercise of a derivatives security. 0 = European 1 = American 2 = Bermuda",
+                    "$ref": "#/$defs/ExerciseStyleEnum"
+                },
+                "maturityDate": {
+                    "description": "For options expiry date",
+                    "type": "string"
+                },
+                "currency": {
+                    "description": "Identifies currency used for price. Absence of this field is interpreted as the default for the security. ",
+                    "type": "string"
+                },
+                "quantity": {
+                    "description": "Overall/total quantity (e.g. number of shares)",
+                    "type": "string"
+                },
+                "lastMarket": {
+                    "description": "Market of execution for last fill, or an indication of the market where an order was routed",
+                    "type": "string"
+                },
+                "averagePrice": {
+                    "description": "Calculated average price of all fills on this order OR Client allocation price",
+                    "type": "string"
+                },
+                "settlementType": {
+                    "description": "Indicates order settlement period. If present, SettlementDate overrides this field. If both SettlementType and SettlementDate are omitted, the default for SettlementType is 0 (Regular). Regular is defined as the default settlement period for the particular security on the exchange of executionValid Values:0 = Regular, 1 = Cash, 2 = NextDay, 3 = T2, 4 = T3, 5 = T4, 6 = Future, 7 = WhenIssued, 8 = T5, 9 = T1",
+                    "$ref": "#/$defs/SettlementTypeEnum"
+                },
+                "settlementDate": {
+                    "description": "Specific date of trade settlement (SettlementDate) in YYYYMMDD format. If present, this field overrides SettlementType",
+                    "type": "string",
+                    "format": "date"
+                },
+                "singleExecutingBrokerOrderAveragePrice": {
+                    "description": "Indicates order settlement period. If present, SettlementDate overrides this field. If both SettlementType and SettlementDate are omitted, the default for SettlementType is 0 (Regular). Regular is defined as the default settlement period for the particular security on the exchange of executionValid Values:0 = Regular, 1 = Cash, 2 = NextDay, 3 = T2, 4 = T3, 5 = T4, 6 = Future, 7 = WhenIssued, 8 = T5, 9 = T1",
+                    "type": "string"
+                },
+                "transactionTime": {
+                    "description": "Timestamp when the business transaction represented by the  message occurred",
+                    "type": "string"
+                },
+                "clearingBusinessDate": {
+                    "description": "The Clearing Business Date referred to by this maintenance request.",
+                    "type": "string"
+                },
+                "tradeType": {
+                    "description": "Indicates Trade Type of Allocation",
+                    "type": "string"
+                },
+                "tradeInputSource": {
+                    "description": "Indicates input source of original trade marked for allocation.",
+                    "type": "string"
+                },
+                "matchType": {
+                    "description": "The point in the matching process at which this trade was matched",
+                    "type": "string"
+                },
+                "securityAlternatives": {
+                    "type": "array",
+                    "items": {"$ref": "#/$defs/SecurityAlternative"}
+                }
+            }
+        },
+        "OrderDetail": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "orderId": {
+                    "description": "Unique identifier for Order as assigned by sell-side (broker, \nexchange, ECN).",
+                    "type": "string"
+                },
+                "clientOrderId": {
+                    "description": "Unique identifier for Order as assigned by the buy-side (institution, broker, intermediary etc.)",
+                    "type": "string"
+                },
+                "secondaryOrderId": {
+                    "description": "Assigned by the party which accepts the order.  Can be used to provide the OrderID (tag 37) used by an exchange or executing system",
+                    "type": "string"
+                },
+                "secondaryClientOrderId": {
+                    "description": "The Client Order ID submitted to the exchange by the executing broker",
+                    "type": "string"
+                },
+                "clientChildOrderId": {
+                    "description": "Custom tag field 11002 reserved to be used to capture the Client's Parent Order Id",
+                    "type": "string"
+                },
+                "clientParentOrderId": {
+                    "description": "Custom tag field 11003 reserved to be used to capture the Client's Parent Order Id",
+                    "type": "string"
+                },
+                "executingBrokerChildOrderId": {
+                    "description": "Custom tag field reserved to be used to capture the Executing Broker's Child Order Id",
+                    "type": "string"
+                },
+                "executingBrokerParentOrderId": {
+                    "description": "Custom tag field reserved to be used to capture the Executing Broker's Parent Order Id",
+                    "type": "string"
+                },
+                "executingBrokerOrderAveragePrice": {
+                    "description": "",
+                    "type": "string"
+                }
+            }
+        },
+        "ExecutionDetail": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "executionId": {
+                    "description": "Unique identifier of execution message as assigned by sell-side (broker, exchange, ECN)",
+                    "type": "string"
+                },
+                "secondaryExecutionId": {
+                    "description": "Assigned by the party which accepts the order. Can be used to provide the ExecID (17) used by an exchange or executing system",
+                    "type": "string"
+                },
+                "lastQuantity": {
+                    "description": "Quantity (e.g. shares) bought/sold on this (last) fill.",
+                    "type": "number"
+                },
+                "lastPrice": {
+                    "description": "Price of individual execution. Required if NoExecs > 0. EB fill price",
+                    "type": "string"
+                },
+                "tradeId": {
+                    "description": "The unique ID assigned to the trade entity once it is received or matched by the exchange or central counterparty.",
+                    "type": "string"
+                },
+                "firmTradeId": {
+                    "description": "The ID assigned to a trade by the Firm to track a trade within the Firm system. This ID can be assigned either before or after submission to the exchange or central counterparty",
+                    "type": "string"
+                },
+                "exchangeOrderId": {
+                    "description": "The Exchanges's Order Id",
+                    "type": "string"
+                },
+                "clearedTradeId": {
+                    "description": "The CCP Cleared Trade Id",
+                    "type": "string"
+                },
+                "clearingHouseExecutionId": {
+                    "description": "The CCP Execution Id",
+                    "type": "string"
+                }
+            }
+        },
+        "AllocationDetail": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "allocationAccount": {
+                    "description": "Sub-account mnemonic",
+                    "type": "string"
+                },
+                "allocationPrice": {
+                    "description": "Executed price for an AllocationDetail entry used when using executed pricevs. average price allocations",
+                    "type": "string"
+                },
+                "achievedAveragePrice": {
+                    "description": "",
+                    "type": "string"
+                },
+                "allocationQuantity": {
+                    "description": "Quantity to be allocated to specific sub-account",
+                    "type": "number"
+                },
+                "individualAllocationId": {
+                    "description": "Unique identifier for an AllocationDetail entry",
+                    "type": "string"
+                },
+                "secondaryIndividualAllocationId": {
+                    "description": "Will allow the intermediary to specify an allocation ID generated by their system",
+                    "type": "string"
+                },
+                "processCode": {
+                    "description": "",
+                    "type": "string"
+                },
+                "settlementCurrency": {
+                    "description": "Currency code of settlement denomination",
+                    "type": "string"
+                },
+                "allocationMethod": {
+                    "description": "Specifies the method under which a trade quantity was allocated. Valid Values: 1 = Automatic 2 = Guarantor 3 = Manual",
+                    "type": "string"
+                },
+                "allocationCustomerCapacity": {
+                    "description": "Capacity of customer in the allocation block",
+                    "type": "string"
+                },
+                "allocationText": {
+                    "description": "Free format text related to a specific AllocAccount",
+                    "type": "string"
+                },
+                "commissionData": {
+                    "description": "",
+                    "$ref": "#/$defs/CommissionData"
+                },
+                "miscFeeData": {
+                    "type": "array",
+                    "items": {"$ref": "#/$defs/MiscFeeData"}
+                },
+                "partyData": {
+                    "type": "array",
+                    "items": {"$ref": "#/$defs/PartyData"}
+                }
+            }
+        },
+        "CommissionData": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "commission": {
+                    "description": "commission",
+                    "type": "number"
+                },
+                "commissionType": {
+                    "description": "Commission type",
+                    "type": "string"
+                },
+                "commissionCurrency": {
+                    "description": "Specifies currency to be use for Commission, if the Commission currency is different from the Deal Currency",
+                    "type": "string"
+                }
+            }
+        },
+        "MiscFeeData": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "feeAmount": {
+                    "description": "Sub-account mnemonic",
+                    "type": "number"
+                },
+                "feeType": {
+                    "description": "Commission type",
+                    "type": "string"
+                }
+            }
+        },
+        "PartyData": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "partyId": {
+                    "description": "PartyID value",
+                    "type": "number"
+                },
+                "partySource": {
+                    "description": "PartyIDSource value ",
+                    "type": "string"
+                },
+                "partyRole": {
+                    "description": "PartyRole value ",
+                    "type": "string"
+                }
+            }
+        },
+        "SecurityAlternative": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "securityAltId": {
+                    "description": "Symbol value",
+                    "type": "string"
+                },
+                "securityAltIDSource": {
+                    "description": "Symbol vendor - Generated only for Futures A - BBG Code with prompt",
+                    "type": "string"
+                }
+            }
+        },
+        "UnderlyingInstrument": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "underlyingSymbol": {
+                    "description": "Futures - exchange Ticker. Options - Root RIC(composite)",
+                    "type": "string"
+                },
+                "underlyingSecurity": {
+                    "type": "array",
+                    "items": {"$ref": "#/$defs/UnderlyingSecurity"}
+                }
+            }
+        },
+        "UnderlyingSecurity": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "underlyingSecurityAltID": {
+                    "description": "Symbol value",
+                    "type": "string"
+                },
+                "underlyingSecurityAltIDSource": {
+                    "description": "Symbol vendor - Generated only for Futures A - BBG Code with prompt",
+                    "type": "string"
+                }
+            }
+        },
+        "SecurityTypeEnum": {
+            "type": "string",
+            "enum": [
+                "Futures",
+                "Options"
+            ]
+        },
+        "SideTypeEnum": {
+            "type": "string",
+            "enum": [
+                "Buy",
+                "Sell"
+            ]
+        },
+        "OptionTypeEnum": {
+            "type": "string",
+            "enum": [
+                "Put",
+                "Call"
+            ]
+        },
+        "ExerciseStyleEnum": {
+            "type": "string",
+            "enum": [
+                "European",
+                "American",
+                "Bermudan"
+            ]
+        },
+        "SettlementTypeEnum": {
+            "type": "string",
+            "enum": [
+                "0",
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8",
+                "9"
+            ]
+        }
+    }
+}
